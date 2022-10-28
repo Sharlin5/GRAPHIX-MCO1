@@ -1,0 +1,6 @@
+﻿  Source.cpp
+  Generating code
+  Compiler switch has changed, fall back to full compilation.
+  All 3 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  GRAPHIX-MCO.vcxproj -> D:\graphix-mco\GRAPHIX-MCO1\GRAPHIX-MCO\x64\Release\GRAPHIX-MCO.exe
