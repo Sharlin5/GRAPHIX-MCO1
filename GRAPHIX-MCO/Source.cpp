@@ -1,4 +1,26 @@
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
+
+#include <string>
+#include <iostream>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+#define TINYOBJLOADER_IMPLEMENTATION
+#include "tiny_obj_loader.h"
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
+//include classes
+#include "Model.h"
+#include "Light.h"
+#include "Camera.h"
+#include "Shader.h"
+#include "Skybox.h"
+#include "Player.h"
 
 int main(void)
 {
