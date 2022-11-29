@@ -4,6 +4,7 @@ private:
 	float pos_x, pos_y, pos_z; //position
 	float rot_x, rot_y, rot_z, theta; // rotation
 	float scale_x, scale_y, scale_z; // scale
+	Model player;
 
 public:
 	Player() {

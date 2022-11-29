@@ -40,8 +40,21 @@ int main(void)
         return -1;
     }
 
+    // load player model
+    Player player = Player();
+    // load enemy models
+    Model model1 = Model();
+    Model model2 = Model();
+    Model model3 = Model();
+    Model model4 = Model();
+    Model model5 = Model();
+    Model model6 = Model();
+
+
+
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
+    gladLoadGL();
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
