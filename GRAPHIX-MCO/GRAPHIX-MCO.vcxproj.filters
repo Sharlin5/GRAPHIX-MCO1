@@ -48,4 +48,10 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="Shader\main.vert" />
+    <CopyFileToFolders Include="Shader\skybox.frag" />
+    <CopyFileToFolders Include="Shader\main.frag" />
+    <CopyFileToFolders Include="Shader\skybox.vert" />
+  </ItemGroup>
 </Project>
