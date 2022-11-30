@@ -27,6 +27,15 @@
 #include "Skybox.h"
 #include "Player.h"
 
+bool isFirst = false, isPerspective = true;
+float modPos_x = 0.0, modPos_y = 0.0, modPos_z = 0.0;
+
+void Key_Callback(GLFWwindow* window,
+    int key,
+    int scanCode,
+    int action,
+    int mods);
+
 int main(void)
 {
     float screenHeight, screenWidth;
@@ -116,4 +125,80 @@ int main(void)
 
     glfwTerminate();
     return 0;
+}
+
+void Key_Callback(GLFWwindow* window, int key, int scanCode, int action, int mods) {
+    if (isFirst == true && isPerspective == true && key == GLFW_KEY_1) {
+        isFirst == false;
+        // change to 3rd person
+    } 
+
+    if (isFirst == false && isPerspective == true && key == GLFW_KEY_1) {
+        isFirst == true;
+        // change to 1st person
+    }
+
+    if (isPerspective == false && key == GLFW_KEY_1) {
+        isPerspective == true;
+        // change to 
+    }
+
+    if (isPerspective == true && key == GLFW_KEY_2) {
+        isPerspective == false;
+        // change to 
+    }
+
+    if (key == GLFW_KEY_F && action == GLFW_PRESS) {
+        //change intensity
+        //else if 
+    }
+
+    if (isPerspective == true) {
+        if (key == GLFW_KEY_W) {
+            // Forward
+        }
+
+        if (key == GLFW_KEY_S) {
+            // Backward
+        }
+
+        if (key == GLFW_KEY_A) {
+            // left
+        }
+
+        if (key == GLFW_KEY_D) {
+            // right
+        }
+
+        if (key == GLFW_KEY_Q) {
+            // Ascend
+
+        }
+
+        if (key == GLFW_KEY_E) {
+            //Descend
+
+        }
+    }
+    else {
+        //pan camera in top view
+        if (key == GLFW_KEY_W) {
+            // Forward
+        }
+
+        if (key == GLFW_KEY_S) {
+            // Backward
+        }
+
+        if (key == GLFW_KEY_A) {
+            // left
+        }
+
+        if (key == GLFW_KEY_D) {
+            // right
+        }
+    }
+
+    
+
 }

@@ -30,8 +30,12 @@ class Model {
 			pos_x = pos_y = pos_z = rot_x = rot_y = rot_z = theta = scale_x = scale_y = scale_z = 0.0;
 			
 			std::string objPath = "3D/";
-			if (id == 0) objPath += "Player/";
-			else objPath += "Enemy/" + std::to_string(id) + "/";
+			if (id == 0) { 
+				objPath += "Player/"; 
+			}
+			else {
+				objPath += "Enemy/" + std::to_string(id) + "/";
+			}
 			objPath += objName + ".obj";
 			bool success = tinyobj::LoadObj(&attributes, &shapes, &materials, &warning, &error, objPath.c_str());
 			std::cout << success << " " << objPath << "\n";

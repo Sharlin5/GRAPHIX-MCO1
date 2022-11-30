@@ -51,5 +51,9 @@
   <ItemGroup>
     <CopyFileToFolders Include="Shader\skybox.frag" />
     <CopyFileToFolders Include="Shader\skybox.vert" />
+    <CopyFileToFolders Include="Shader\2txtModel.frag" />
+    <CopyFileToFolders Include="Shader\2txtModel.vert" />
+    <CopyFileToFolders Include="Shader\5txtModel.frag" />
+    <CopyFileToFolders Include="Shader\5txtModel.vert" />
   </ItemGroup>
 </Project>
