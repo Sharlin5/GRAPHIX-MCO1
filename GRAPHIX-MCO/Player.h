@@ -21,6 +21,6 @@ class Player {
 		}
 
 		void rotPlayer(float rot_x, float rot_y, float rot_z, float theta) {
-			player.setPos(rot_x, rot_y, rot_z, theta);
+			player.setRot(rot_x, rot_y, rot_z, theta);
 		}
 };

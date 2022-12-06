@@ -227,7 +227,7 @@ void Key_Callback(GLFWwindow* window, int key, int scanCode, int action, int mod
 
         if (key == GLFW_KEY_D) {
             // right
-            pan_y += 0.5
+            pan_y += 0.5;
         }
     }
 
