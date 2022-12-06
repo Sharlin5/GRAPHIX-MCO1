@@ -28,7 +28,9 @@
 #include "Player.h"
 
 bool isFirst = false, isPerspective = true;
-float modPos_x = 0.0, modPos_y = 0.0, modPos_z = 0.0;
+float modPos_x = 0.0, modPos_y = 0.0, modPos_z = 0.0, modRot_y = 0.0, pos_y = -10, lightIntensity = 0.0;
+float pan_x = 0.0, pan_y = 0.0;
+int currIntensity = 1; // 1=low, 2=med, 3=high
 
 void Key_Callback(GLFWwindow* window,
     int key,
@@ -90,6 +92,7 @@ int main(void)
     // TODO: Add Source Links
     // Load Player Model
     Player player = (identityMatrix);
+
     // Load Enemy Models
     //std::vector<Model> enemies;
     //enemies.push_back(Model("Seaview_submarine", 1));
@@ -108,7 +111,10 @@ int main(void)
         // Render Skybox
         skybox.draw(skyboxShdr.getShader(), perspectiveCam);
         player.getPlayer().draw(obj5TxtShdr.getShader(), dirLight, perspectiveCam);
-        player.getPlayer().setPos(0, 0, 0);
+        
+        //player.getPlayer().setPos(0, 0, 0);
+        //added move function in player object
+        player.movePlayer(0, 0, 0);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
@@ -140,62 +146,88 @@ void Key_Callback(GLFWwindow* window, int key, int scanCode, int action, int mod
 
     if (isPerspective == false && key == GLFW_KEY_1) {
         isPerspective == true;
-        // change to 
+        // change to perspective
     }
 
     if (isPerspective == true && key == GLFW_KEY_2) {
         isPerspective == false;
-        // change to 
+        // change to top view
     }
 
     if (key == GLFW_KEY_F && action == GLFW_PRESS) {
         //change intensity
-        //else if 
+        //else if/case check curr intensity
+        switch (currIntensity) {
+            case 1:{
+
+                currIntensity = 2;
+                break;
+            }
+            case 2: {
+                currIntensity = 3;
+                break;
+            }
+            case 3: {
+                currIntensity = 1;
+                break;
+            }
+        }
     }
 
     if (isPerspective == true) {
         if (key == GLFW_KEY_W) {
             // Forward
+            modPos_z += 0.5;
         }
 
         if (key == GLFW_KEY_S) {
             // Backward
+            modPos_z -= 0.5;
         }
 
         if (key == GLFW_KEY_A) {
-            // left
+            // turn left
+            modRot_y += 0.5;
         }
 
         if (key == GLFW_KEY_D) {
-            // right
+            // turn right
+            modRot_y -= 0.5;
         }
 
-        if (key == GLFW_KEY_Q) {
-            // Ascend
-
+        // if pos += 0.5 > 0 do not register this.
+        if (pos_y += 0.5 < 0) {
+            if (key == GLFW_KEY_Q) {
+                // Ascend(Depth)
+                modPos_y += 0.5;
+            }
         }
 
         if (key == GLFW_KEY_E) {
-            //Descend
-
+            // Descend(Depth)
+            modPos_y += 0.5;
         }
     }
     else {
         //pan camera in top view
         if (key == GLFW_KEY_W) {
             // Forward
+            pan_y += 0.5;
         }
 
         if (key == GLFW_KEY_S) {
             // Backward
+            pan_y -= 0.5;
         }
 
         if (key == GLFW_KEY_A) {
             // left
+            pan_x -= 0.5;
         }
 
         if (key == GLFW_KEY_D) {
             // right
+            pan_y += 0.5
         }
     }
 
