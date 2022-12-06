@@ -32,11 +32,12 @@ float modPos_x = 0.0, modPos_y = 0.0, modPos_z = 0.0, modRot_y = 0.0, pos_y = -1
 float pan_x = 0.0, pan_y = 0.0;
 int currIntensity = 1; // 1=low, 2=med, 3=high
 
-void Key_Callback(GLFWwindow* window,
-    int key,
-    int scanCode,
-    int action,
-    int mods);
+//insert cursor position values
+
+
+void Key_Callback(GLFWwindow* window, int key, int scanCode, int action, int mods);
+void cursor_position_callback(GLFWwindow* window, double xposIn, double yposIn);
+
 
 int main(void)
 {
@@ -108,13 +109,35 @@ int main(void)
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
+        //set cam
+        if (isPerspective == true) {
+            //pass perspective camera
+            if (isFirst == true) {
+                //pass 1st perspective
+            }
+            else {
+                //pass 3rd perspective
+            }
+        }
+        else {
+            //pass orthographic camera
+        }
+
         // Render Skybox
         skybox.draw(skyboxShdr.getShader(), perspectiveCam);
         player.getPlayer().draw(obj5TxtShdr.getShader(), dirLight, perspectiveCam);
-        
+
         //player.getPlayer().setPos(0, 0, 0);
         //added move function in player object
+        // change to modPos_x, modPos_y, modPos_z 
         player.movePlayer(0, 0, 0);
+
+        //draw all models
+        /*
+        for()
+        enemies.draw()
+        
+        */
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
@@ -134,32 +157,31 @@ int main(void)
 }
 
 void Key_Callback(GLFWwindow* window, int key, int scanCode, int action, int mods) {
+    // condition 1st to 3rd person perspective
     if (isFirst == true && isPerspective == true && key == GLFW_KEY_1) {
         isFirst == false;
-        // change to 3rd person
     } 
 
+    // condition 3rd to 1st person perspective
     if (isFirst == false && isPerspective == true && key == GLFW_KEY_1) {
         isFirst == true;
-        // change to 1st person
     }
 
+    // condition from top to perspective view
     if (isPerspective == false && key == GLFW_KEY_1) {
         isPerspective == true;
-        // change to perspective
     }
 
+    // condition perspective to top view
     if (isPerspective == true && key == GLFW_KEY_2) {
         isPerspective == false;
-        // change to top view
     }
 
     if (key == GLFW_KEY_F && action == GLFW_PRESS) {
         //change intensity
-        //else if/case check curr intensity
+        //set intensity value
         switch (currIntensity) {
             case 1:{
-
                 currIntensity = 2;
                 break;
             }
@@ -174,6 +196,7 @@ void Key_Callback(GLFWwindow* window, int key, int scanCode, int action, int mod
         }
     }
 
+    // perspective movement
     if (isPerspective == true) {
         if (key == GLFW_KEY_W) {
             // Forward
@@ -230,7 +253,9 @@ void Key_Callback(GLFWwindow* window, int key, int scanCode, int action, int mod
             pan_y += 0.5;
         }
     }
+}
 
-    
+// only move when on 3rd perspective
+void cursor_position_callback(GLFWwindow* window, double xposIn, double yposIn) {
 
 }
