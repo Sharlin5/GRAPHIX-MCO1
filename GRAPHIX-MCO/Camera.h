@@ -56,11 +56,14 @@ class Camera {
 		}
 
 		void setCameraFRU(glm::vec3 F, glm::vec3 R, glm::vec3 U) {
-
+			this->F = F;
+			this->R = R;
+			this->U = U;
 		}
 
 		void setViewMatrix() {
-			this->viewMatrix = glm::lookAt(cameraPos, cameraCenter, worldUp);
+			//this->viewMatrix = glm::lookAt(cameraPos, cameraCenter, worldUp);
+			this->viewMatrix = glm::lookAt(cameraPos, cameraPos + F, U);
 		}
 
 		void setProjectionMatrix(glm::mat4 projectionMatrix) {
