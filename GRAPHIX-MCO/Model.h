@@ -286,7 +286,7 @@ class Model {
 			glDrawArrays(GL_TRIANGLES, 0, fullVertexData.size() / 14);
 			
 			
-			std::cout << pos_x << " " << pos_y << " " << pos_z << " | " << rot_x << " " << rot_y << " " << rot_z << " | " << scale_x << " " << scale_y << " " << scale_z << "\n";
+			// std::cout << pos_x << " " << pos_y << " " << pos_z << " | " << rot_x << " " << rot_y << " " << rot_z << " | " << scale_x << " " << scale_y << " " << scale_z << "\n";
 		}
 
 		void deleteData() {

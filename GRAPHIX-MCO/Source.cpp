@@ -27,23 +27,28 @@
 #include "Skybox.h"
 #include "Player.h"
 
+// Global Variables
 bool isFirst = false, isPerspective = true;
-float modPos_x = 0.0, modPos_y = 0.0, modPos_z = 0.0, modRot_y = 0.0, pos_y = -10, lightIntensity = 0.0;
+float screenHeight = 800.f, screenWidth = 800.f,
+      lastX = screenWidth / 2.f, lastY = screenHeight / 2.f,
+      modPos_x = 0.0, modPos_y = 0.0, modPos_z = 0.0,
+      modRot_y = 0.0, pos_y = -10,
+      yaw = -90.f, pitch = 0,
+      lightIntensity = 0.0,
+      deltaTime, lastFrame = 0.0;
 float pan_x = 0.0, pan_y = 0.0;
 int currIntensity = 1; // 1=low, 2=med, 3=high
+glm::vec3 F, R, U, worldUp;
 
 //insert cursor position values
 
 
 void Key_Callback(GLFWwindow* window, int key, int scanCode, int action, int mods);
-void cursor_position_callback(GLFWwindow* window, double xposIn, double yposIn);
+void Mouse_Callback(GLFWwindow* window, double xPos, double yPos);
 
 
 int main(void)
 {
-    float screenHeight, screenWidth;
-    screenHeight = screenWidth = 800.f;
-
     GLFWwindow* window;
 
     // Initialize the library
@@ -65,6 +70,11 @@ int main(void)
     gladLoadGL();
     glViewport(0, 0, screenWidth, screenHeight);
 
+    // Initialize key callback and mouse input callback
+    glfwSetKeyCallback(window, Key_Callback);
+    glfwSetCursorPosCallback(window, Mouse_Callback);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
     // Declare Identity, Projection, and Orthographic Matrices to be used
     glm::mat4 identityMatrix = glm::mat4(1.0f);
     glm::mat4 projectionMatrix = glm::perspective(glm::radians(60.0f), screenHeight / screenWidth, 0.1f, 100.f);
@@ -85,10 +95,9 @@ int main(void)
     // Initialize Ortographic and Perspective Cameras// Initialize Camera
     glm::vec3 cameraPos = glm::vec3(0.f, 5.f, 10.0f);
     glm::vec3 cameraCenter = glm::vec3(0.f, 5.f, 0.f);
-    glm::vec3 worldUp = glm::normalize(glm::vec3(0.f, 1.5f, 0.f));
+    worldUp = glm::normalize(glm::vec3(0.f, 1.5f, 0.f));
     OrthographicCamera orthoCam = OrthographicCamera(cameraPos, cameraCenter, worldUp, orthoMatrix);
-    PerspectiveCamera perspectiveCam = PerspectiveCamera(cameraPos, cameraCenter, worldUp, projectionMatrix);
-
+    PerspectiveCamera perspectiveCam = PerspectiveCamera(cameraPos, cameraCenter, worldUp, projectionMatrix); 
     
     // TODO: Add Source Links
     // Load Player Model
@@ -108,6 +117,11 @@ int main(void)
     {
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // Compute for the velocity needed for camera movement (More uniform for different systems)
+        float currentFrame = static_cast<float>(glfwGetTime());
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
 		
         //set cam
         if (isPerspective == true) {
@@ -122,6 +136,15 @@ int main(void)
         else {
             //pass orthographic camera
         }
+
+        // Update Camera
+        perspectiveCam.setCameraPos(glm::vec3(modPos_x, modPos_y, modPos_z));
+        perspectiveCam.setCameraFRU(F, R, U);
+        perspectiveCam.setViewMatrix();
+        if (isPerspective) std::cout << "[Perspective] ";
+        else std::cout << "[Orthographic] ";
+        //std::cout << "CameraPos: " << perspectiveCam.getCameraPos().x << " " << perspectiveCam.getCameraPos().y << " " << perspectiveCam.getCameraPos().z << " | " << modPos_x << " " << modPos_y << " " << modPos_z << "\n";
+        std::cout << "CameraPos: " << F.x << " "  << F.y << " " << F.z << " | " << R.x << " " << R.y << " " << R.z << " | " << U.x << " " << U.y << " " << U.z << "\n";
 
         // Render Skybox
         skybox.draw(skyboxShdr.getShader(), perspectiveCam);
@@ -157,65 +180,44 @@ int main(void)
 }
 
 void Key_Callback(GLFWwindow* window, int key, int scanCode, int action, int mods) {
+    float cameraSpeed = 300.0f * deltaTime;     // Camera Speed/Velocity
+    glm::vec3 direction;                        // Current Camera Location
+    
     // condition 1st to 3rd person perspective
-    if (isFirst == true && isPerspective == true && key == GLFW_KEY_1) {
-        isFirst == false;
+    if (key == GLFW_KEY_1) {
+        isFirst = !isFirst;
     } 
 
-    // condition 3rd to 1st person perspective
-    if (isFirst == false && isPerspective == true && key == GLFW_KEY_1) {
-        isFirst == true;
-    }
-
-    // condition from top to perspective view
-    if (isPerspective == false && key == GLFW_KEY_1) {
-        isPerspective == true;
-    }
-
     // condition perspective to top view
-    if (isPerspective == true && key == GLFW_KEY_2) {
-        isPerspective == false;
+    if (key == GLFW_KEY_2) {
+        isPerspective = !isPerspective;
     }
 
     if (key == GLFW_KEY_F && action == GLFW_PRESS) {
         //change intensity
         //set intensity value
-        switch (currIntensity) {
-            case 1:{
-                currIntensity = 2;
-                break;
-            }
-            case 2: {
-                currIntensity = 3;
-                break;
-            }
-            case 3: {
-                currIntensity = 1;
-                break;
-            }
-        }
+        if (currIntensity < 3)
+            currIntensity++;
+        else
+            currIntensity = 1;
     }
 
-    // perspective movement
-    if (isPerspective == true) {
+    // Perspective (Player) Movement
+    if (!isPerspective) {
         if (key == GLFW_KEY_W) {
             // Forward
-            modPos_z += 0.5;
         }
 
         if (key == GLFW_KEY_S) {
             // Backward
-            modPos_z -= 0.5;
         }
 
         if (key == GLFW_KEY_A) {
             // turn left
-            modRot_y += 0.5;
         }
 
         if (key == GLFW_KEY_D) {
             // turn right
-            modRot_y -= 0.5;
         }
 
         // if pos += 0.5 > 0 do not register this.
@@ -255,7 +257,41 @@ void Key_Callback(GLFWwindow* window, int key, int scanCode, int action, int mod
     }
 }
 
-// only move when on 3rd perspective
-void cursor_position_callback(GLFWwindow* window, double xposIn, double yposIn) {
+// Perspective (3rd Person Camera) Movement
+void Mouse_Callback(GLFWwindow* window, double xPos, double yPos) {
+    glm::vec3 direction;
 
+    if(isPerspective && !isFirst) {
+        // Variables for current mouse location
+        float xpos = static_cast<float>(xPos);
+        float ypos = static_cast<float>(yPos);
+
+        float xoffset = xpos - lastX;
+        float yoffset = lastY - ypos; // reversed since y-coordinates range from bottom to top
+        lastX = xpos;
+        lastY = ypos;
+
+        const float sensitivity = 0.1f; // Mouse sensitivity value
+        xoffset *= sensitivity;         // Compute for mouse x-offset * mouse sensitivity
+        yoffset *= sensitivity;         // Compute for mouse y-offset * mouse sensitivity
+
+        yaw += xoffset;     // Adjust horizontal rotation using mouse offset value
+        pitch += yoffset;   // Adjust vertical rotation using mouse offset value
+
+        // Maintain Pitch Values to -90 > x < 90
+        if (pitch > 89.0f)
+            pitch = 89.0f;
+        if (pitch < -89.0f)
+            pitch = -89.0f;
+
+        // Compute for the new directional values (for rotation)
+        direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+        direction.y = sin(glm::radians(pitch));
+        direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+
+        // Compute for the new camera position/angle
+        F = glm::normalize(direction);
+        R = glm::normalize(glm::cross(F, worldUp));  // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
+        U = glm::normalize(glm::cross(R, F));
+    }
 }

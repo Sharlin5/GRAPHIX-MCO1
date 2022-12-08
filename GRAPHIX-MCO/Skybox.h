@@ -65,12 +65,12 @@ class Skybox {
 
 			// Initialize Skybox Textures
             std::string facesSkybox[]{
-                "Skybox/skybox_rt.png",
-                "Skybox/skybox_lf.png",
-                "Skybox/skybox_tp.png",
-                "Skybox/skybox_bt.png",
-                "Skybox/skybox_ft.png",
-                "Skybox/skybox_bk.png"
+                "Skybox/ocean_rt.png",
+                "Skybox/ocean_lf.png",
+                "Skybox/ocean_tp.png",
+                "Skybox/ocean_bt.png",
+                "Skybox/ocean_ft.png",
+                "Skybox/ocean_bk.png"
             };
 			
 			glGenTextures(1, &txt);

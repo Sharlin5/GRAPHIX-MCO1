@@ -2,7 +2,7 @@
 // Camera Object
 class Camera {
 	protected:
-		glm::vec3 cameraPos, worldUp, cameraCenter;
+		glm::vec3 cameraPos, worldUp, cameraCenter, F, R, U;
 		glm::mat4 viewMatrix, projectionMatrix;
 
 	public:
@@ -21,6 +21,18 @@ class Camera {
 
 		glm::vec3 getCameraCenter() {
 			return cameraCenter;
+		}
+
+		glm::vec3 getCameraF() {
+			return F;
+		}
+
+		glm::vec3 getCameraR() {
+			return R;
+		}
+
+		glm::vec3 getCameraU() {
+			return U;
 		}
 
 		glm::mat4 getViewMatrix() {
@@ -43,8 +55,12 @@ class Camera {
 			this->cameraCenter = cameraCenter;
 		}
 
-		void setViewMatrix(glm::vec3 cameraPos, glm::vec3 F, glm::vec3 U) {
-			this->viewMatrix = glm::lookAt(cameraPos, F, U);
+		void setCameraFRU(glm::vec3 F, glm::vec3 R, glm::vec3 U) {
+
+		}
+
+		void setViewMatrix() {
+			this->viewMatrix = glm::lookAt(cameraPos, cameraCenter, worldUp);
 		}
 
 		void setProjectionMatrix(glm::mat4 projectionMatrix) {
@@ -59,6 +75,11 @@ class OrthographicCamera : public Camera {
 			this->cameraCenter = cameraCenter;
 			this->worldUp = worldUp;
 
+			F = cameraCenter - cameraPos;
+			F = glm::normalize(F);
+			R = glm::cross(F, worldUp);
+			U = glm::cross(R, F);
+
 			viewMatrix = glm::lookAt(cameraPos, cameraCenter, worldUp);
 			projectionMatrix = orthoMatrix;
 		}
@@ -71,6 +92,11 @@ class PerspectiveCamera : public Camera {
 			this->cameraPos = cameraPos;
 			this->cameraCenter = cameraCenter;
 			this->worldUp = worldUp;
+
+			F = cameraCenter - cameraPos;
+			F = glm::normalize(F);
+			R = glm::cross(F, worldUp);
+			U = glm::cross(R, F);
 
 			viewMatrix = glm::lookAt(cameraPos, cameraCenter, worldUp);
 			projectionMatrix = perspectiveMatrix;
