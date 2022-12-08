@@ -184,12 +184,12 @@ void Key_Callback(GLFWwindow* window, int key, int scanCode, int action, int mod
     glm::vec3 direction;                        // Current Camera Location
     
     // condition 1st to 3rd person perspective
-    if (key == GLFW_KEY_1) {
+    if (key == GLFW_KEY_1 && action == GLFW_PRESS) {
         isFirst = !isFirst;
     } 
 
     // condition perspective to top view
-    if (key == GLFW_KEY_2) {
+    if (key == GLFW_KEY_2 && action == GLFW_PRESS) {
         isPerspective = !isPerspective;
     }
 
