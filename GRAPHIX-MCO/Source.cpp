@@ -105,10 +105,10 @@ int main(void)
     U = glm::cross(R, F);
     perspectiveCam.setCameraFRU(F, R, U);
 
-    cameraPos = glm::vec3(0.f, -20.f, 10.f);
-    cameraCenter = glm::vec3(0.f, 10.f, 0.f);
-    worldUp = glm::normalize(glm::vec3(0.f, 10.f, 0.f));
-    orthoCam = OrthographicCamera(cameraPos, cameraCenter, worldUp, projectionMatrix);
+    cameraPos = glm::vec3(0.f, 90.f, 15.f);
+    cameraCenter = glm::vec3(0.f, 3.f, 0.f);
+    glm::vec3 orthoworldUp = glm::normalize(glm::vec3(0.f, 180.f, 0.f));
+    orthoCam = OrthographicCamera(cameraPos, cameraCenter, orthoworldUp, projectionMatrix);
     F = cameraCenter - cameraPos;
     F = glm::normalize(F);
     R = glm::cross(F, worldUp);
@@ -144,11 +144,14 @@ int main(void)
         if (isPerspective){
             currCam = perspectiveCam;
             currCam.setCameraFRU(F, R, U);
+            currCam.setViewMatrix();
         }
-        else currCam = orthoCam;
-
+        else {
+            currCam = orthoCam;
+            currCam.setOrthoView();
+        }
         
-        currCam.setViewMatrix();
+        
         std::cout << "CameraPos: " << currCam.getCameraPos().x << " " << currCam.getCameraPos().y << " " << currCam.getCameraPos().z << "\n";
         //std::cout << "CameraPos: " << F.x << " "  << F.y << " " << F.z << " | " << R.x << " " << R.y << " " << R.z << " | " << U.x << " " << U.y << " " << U.z << "\n";
 
