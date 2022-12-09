@@ -27,7 +27,9 @@ class Model {
 
 		Model(std::string objName, int id) {
 			this->id = id;
-			pos_x = pos_y = pos_z = rot_x = rot_y = rot_z = theta = scale_x = scale_y = scale_z = theta = 0.f;
+			pos_x = pos_y = pos_z = rot_x = rot_y = rot_z = 0.f;
+			theta = 90.f;
+			scale_x = scale_y = scale_z = theta = 1.f;
 
 			std::string objPath = "3D/";
 			if (id == 0) { 

@@ -42,6 +42,7 @@ glm::vec3 F, R, U, worldUp;
 PerspectiveCamera perspectiveCam;
 OrthographicCamera orthoCam;
 Player player;
+std::vector<Model> enemies;
 
 //insert cursor position values
 
@@ -120,13 +121,12 @@ int main(void)
     player = Player(identityMatrix);
 
     // Load Enemy Models
-    //std::vector<Model> enemies;
-    //enemies.push_back(Model("Seaview_submarine", 1));
-    //enemies.push_back(Model("11098_submarine_v4", 2));
-    //enemies.push_back(Model("submarine", 3));
-    //enemies.push_back(Model("Cyclops_Subnautica", 4));
-    //enemies.push_back(Model("Submarine", 5));
-    //enemies.push_back(Model("Hades_Carrier", 6));
+    enemies.push_back(Model("Seaview_submarine", 1));
+    enemies.push_back(Model("11098_submarine_v4", 2));
+    enemies.push_back(Model("submarine", 3));
+    enemies.push_back(Model("Cyclops_Subnautica", 4));
+    enemies.push_back(Model("Submarine", 5));
+    enemies.push_back(Model("Hades_Carrier", 6));
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -165,6 +165,20 @@ int main(void)
         // Render Player
         player.getPlayer().initTransformationMatrix(identityMatrix);
         player.getPlayer().draw(obj5TxtShdr.getShader(), dirLight, currCam);
+        
+        for (int i = 0; i < enemies.size(); i++) {
+            enemies[i].initTransformationMatrix(identityMatrix);
+
+            switch (enemies[i].getID()) {
+                case 1:
+                    enemies[i].draw(obj2TxtShdr.getShader(), dirLight, currCam);
+                    break;
+                case 6:
+                default:
+                    enemies[i].draw(obj5TxtShdr.getShader(), dirLight, currCam);
+            }            
+        }
+        
         //std::cout << "[Player " << player.getPlayer().getID() << " Location] " << player.getPlayer().getPosX() << ' ' << player.getPlayer().getPosY() << ' ' << player.getPlayer().getPosZ() << " | " << player.getPlayer().getRotX() << ' ' << player.getPlayer().getRotY() << ' ' << player.getPlayer().getRotZ() << " | " << player.getPlayer().getScaleX() << ' ' << player.getPlayer().getScaleY() << ' ' << player.getPlayer().getScaleZ() << '\n';
 
         //player.getPlayer().setPos(0, 0, 0);
