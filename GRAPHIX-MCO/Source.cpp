@@ -86,6 +86,7 @@ int main(void)
     // Load Shaders
     Shader obj2TxtShdr = Shader("2txtModel");
     Shader obj5TxtShdr = Shader("5txtModel");
+    Shader noTxtShdr = Shader("notxtModel");
     Shader skyboxShdr = Shader("skybox");
 
     // Initialize Skybox
@@ -166,8 +167,10 @@ int main(void)
 
         // Render Player
         player.getPlayer().initTransformationMatrix(identityMatrix);
-        player.getPlayer().draw(obj5TxtShdr.getShader(), dirLight, currCam);
+        player.getPlayer().draw(noTxtShdr.getShader(), currCam);
         
+        
+
         /*
         for (int i = 0; i < enemies.size(); i++) {
             enemies[i].initTransformationMatrix(identityMatrix);
@@ -183,7 +186,7 @@ int main(void)
             }            
         }
         */
-        
+
         //std::cout << "[Player " << player.getPlayer().getID() << " Location] " << player.getPlayer().getPosX() << ' ' << player.getPlayer().getPosY() << ' ' << player.getPlayer().getPosZ() << " | " << player.getPlayer().getRotX() << ' ' << player.getPlayer().getRotY() << ' ' << player.getPlayer().getRotZ() << " | " << player.getPlayer().getScaleX() << ' ' << player.getPlayer().getScaleY() << ' ' << player.getPlayer().getScaleZ() << '\n';
 
         //player.getPlayer().setPos(0, 0, 0);
@@ -292,6 +295,7 @@ void Key_Callback(GLFWwindow* window, int key, int scanCode, int action, int mod
         //pan camera in top view
         if (key == GLFW_KEY_W) {
             // Forward
+            //pan_y += 0.5;
             orthoCam.setCameraFRU(glm::vec3(F.x + 0.5f, F.y, F.z), R, U);
             orthoCam.setOrthoView();
         }
@@ -314,6 +318,7 @@ void Key_Callback(GLFWwindow* window, int key, int scanCode, int action, int mod
 
         if (key == GLFW_KEY_D) {
             // right
+            //pan_x += 0.5;
             orthoCam.setCameraPos(glm::vec3(orthoCam.getCameraPos().x + 0.5, orthoCam.getCameraPos().y, orthoCam.getCameraPos().z));
             orthoCam.setCameraFRU(F, R, U);
             orthoCam.setOrthoView();

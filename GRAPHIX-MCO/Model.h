@@ -25,6 +25,96 @@ class Model {
 			warning = error = "";
 		}
 
+		Model(std::string objName) {
+			pos_x = pos_y = pos_z = rot_x = rot_y = rot_z = 0.f;
+			theta = 90.f;
+			scale_x = scale_y = scale_z = theta = 1.f;
+			
+			std::string objPath = "3D/";
+			objPath += "Player/";
+			objPath += objName + ".obj";
+			bool success = tinyobj::LoadObj(&attributes, &shapes, &materials, &warning, &error, objPath.c_str());
+			std::cout << success << " " << objPath << "\n";
+
+			for (int i = 0; i < shapes[0].mesh.indices.size(); i++) {
+				tinyobj::index_t vData = shapes[0].mesh.indices[i];
+
+				int vertexIndex = vData.vertex_index * 3;
+
+				int normalIndex = vData.normal_index * 3;
+
+				int uvIndex = vData.texcoord_index * 2;
+
+				// x
+				fullVertexData.push_back(attributes.vertices[vertexIndex]);
+				// y
+				fullVertexData.push_back(attributes.vertices[vertexIndex + 1]);
+				// z
+				fullVertexData.push_back(attributes.vertices[vertexIndex + 2]);
+
+				fullVertexData.push_back(attributes.normals[normalIndex]);
+
+				fullVertexData.push_back(attributes.normals[normalIndex + 1]);
+
+				fullVertexData.push_back(attributes.normals[normalIndex + 2]);
+
+				// u
+				fullVertexData.push_back(attributes.texcoords[uvIndex]);
+				// v
+				fullVertexData.push_back(attributes.texcoords[uvIndex + 1]);
+			}
+
+			//Generate and Assign ID to VAO
+			glGenVertexArrays(1, &VAO);
+			//Generate and Assign ID to VBO
+			glGenBuffers(1, &VBO);
+
+			glBindVertexArray(VAO);
+			glBindBuffer(GL_ARRAY_BUFFER, VBO);
+			glBufferData(
+				GL_ARRAY_BUFFER,
+				sizeof(GL_FLOAT) * fullVertexData.size(),
+				fullVertexData.data(),
+				GL_STATIC_DRAW
+			);
+
+			glVertexAttribPointer(
+				0, //Pos
+				3, //xyz
+				GL_FLOAT,
+				GL_FALSE,
+				8 * sizeof(GL_FLOAT),
+				(void*)0
+			);
+
+			GLintptr normPtr = 3 * sizeof(float);
+			glVertexAttribPointer(
+				1,
+				3,
+				GL_FLOAT,
+				GL_FALSE,
+				8 * sizeof(GL_FLOAT),
+				(void*)normPtr
+			);
+
+			GLintptr uvPtr = 6 * sizeof(float);
+			glVertexAttribPointer(
+				2,
+				2,
+				GL_FLOAT,
+				GL_FALSE,
+				8 * sizeof(GL_FLOAT),
+				(void*)uvPtr
+			);
+
+			glEnableVertexAttribArray(0);
+			glEnableVertexAttribArray(1);
+			glEnableVertexAttribArray(2);
+
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glBindVertexArray(0);
+		}
+
 		Model(std::string objName, int id) {
 			this->id = id;
 			pos_x = pos_y = pos_z = rot_x = rot_y = rot_z = 0.f;
@@ -238,6 +328,29 @@ class Model {
 			transformationMatrix = glm::rotate(transformationMatrix, glm::radians(theta), glm::normalize(glm::vec3(rot_x, rot_y, rot_z)));
 		}
 
+		void draw(GLuint shaderProgram, Camera cam) {
+			glDepthMask(GL_TRUE);
+			glDepthFunc(GL_LESS);
+
+			glUseProgram(shaderProgram);
+
+			//set color
+			glm::vec3 colorMatrix3 = glm::vec3(0.f, 0.f, 0.5f);
+			unsigned int colorLoc3 = glGetUniformLocation(shaderProgram, "aColor");
+			glUniform3fv(colorLoc3, 1, glm::value_ptr(colorMatrix3));
+
+			// Initialize projection, view, and transformation locations
+			unsigned int projectionLoc = glGetUniformLocation(shaderProgram, "projection");
+			glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(cam.getProjectionMatrix()));
+			unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");
+			glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(cam.getViewMatrix()));
+			unsigned int transformationLoc = glGetUniformLocation(shaderProgram, "transform");
+			glUniformMatrix4fv(transformationLoc, 1, GL_FALSE, glm::value_ptr(transformationMatrix));
+
+			glBindVertexArray(VAO);
+			glDrawArrays(GL_TRIANGLES, 0, fullVertexData.size() / 8);
+		}
+
 		void draw(GLuint shaderProgram, Light light, Camera cam) {
 			glDepthMask(GL_TRUE);
 			glDepthFunc(GL_LESS);
@@ -248,7 +361,7 @@ class Model {
 			light.linkShader(shaderProgram, cam);
 
 			GLuint texAddress;
-
+			/*
 			if (txtCount > 0) {
 				switch (id) {
 					case 1:
@@ -274,6 +387,12 @@ class Model {
 						}
 				}
 			}
+			*/
+
+			//set color
+			glm::vec3 colorMatrix3 = glm::vec3(0.f, 0.f, 0.5f);
+			unsigned int colorLoc3 = glGetUniformLocation(shaderProgram, "aColor");
+			glUniform3fv(colorLoc3, 1, glm::value_ptr(colorMatrix3));
 
 			// Initialize projection, view, and transformation locations
 			unsigned int projectionLoc = glGetUniformLocation(shaderProgram, "projection");
