@@ -84,7 +84,6 @@ class Model {
 				glm::vec3 tangent = (deltaPos1 * deltaUV2.y - deltaPos2 * deltaUV1.y) * r;
 				glm::vec3 bitangent = (deltaPos2 * deltaUV1.x - deltaPos1 * deltaUV2.x) * r;
 
-
 				tangents.push_back(tangent);
 				tangents.push_back(tangent);
 				tangents.push_back(tangent);

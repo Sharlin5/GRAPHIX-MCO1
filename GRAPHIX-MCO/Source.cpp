@@ -98,13 +98,21 @@ int main(void)
     glm::vec3 cameraPos = glm::vec3(0.f, 5.f, 10.0f);
     glm::vec3 cameraCenter = glm::vec3(0.f, 5.f, 0.f);
     worldUp = glm::normalize(glm::vec3(0.f, 1.5f, 0.f));
-    orthoCam = OrthographicCamera(cameraPos, cameraCenter, worldUp, orthoMatrix);
     perspectiveCam = PerspectiveCamera(cameraPos, cameraCenter, worldUp, projectionMatrix); 
     F = cameraCenter - cameraPos;
     F = glm::normalize(F);
     R = glm::cross(F, worldUp);
     U = glm::cross(R, F);
     perspectiveCam.setCameraFRU(F, R, U);
+
+    cameraPos = glm::vec3(0.f, -20.f, 10.f);
+    cameraCenter = glm::vec3(0.f, 10.f, 0.f);
+    worldUp = glm::normalize(glm::vec3(0.f, 10.f, 0.f));
+    orthoCam = OrthographicCamera(cameraPos, cameraCenter, worldUp, projectionMatrix);
+    F = cameraCenter - cameraPos;
+    F = glm::normalize(F);
+    R = glm::cross(F, worldUp);
+    U = glm::cross(R, F);
     orthoCam.setCameraFRU(F, R, U);
     
     // TODO: Add Source Links
@@ -133,11 +141,13 @@ int main(void)
 
         // Update Camera
         Camera currCam;
-        if (isPerspective)
+        if (isPerspective){
             currCam = perspectiveCam;
+            currCam.setCameraFRU(F, R, U);
+        }
         else currCam = orthoCam;
 
-        currCam.setCameraFRU(F, R, U);
+        
         currCam.setViewMatrix();
         std::cout << "CameraPos: " << currCam.getCameraPos().x << " " << currCam.getCameraPos().y << " " << currCam.getCameraPos().z << "\n";
         //std::cout << "CameraPos: " << F.x << " "  << F.y << " " << F.z << " | " << R.x << " " << R.y << " " << R.z << " | " << U.x << " " << U.y << " " << U.z << "\n";
