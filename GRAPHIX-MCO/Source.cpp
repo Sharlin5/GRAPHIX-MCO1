@@ -44,6 +44,8 @@ OrthographicCamera orthoCam;
 Player player;
 std::vector<Model> enemies;
 
+glm::vec3 temp = glm::vec3(0,0,0);
+
 //insert cursor position values
 
 void Key_Callback(GLFWwindow* window, int key, int scanCode, int action, int mods);
@@ -144,12 +146,15 @@ int main(void)
         if (isPerspective){
             currCam = perspectiveCam;
             currCam.setCameraFRU(F, R, U);
+            //currCam.setCameraPos(perspectiveCam.getCameraPos() + temp);
             currCam.setViewMatrix();
         }
         else {
             currCam = orthoCam;
             currCam.setOrthoView();
         }
+
+
 
         std::cout << "CameraPos: " << currCam.getCameraPos().x << " " << currCam.getCameraPos().y << " " << currCam.getCameraPos().z << "\n";
         //std::cout << "CameraPos: " << F.x << " "  << F.y << " " << F.z << " | " << R.x << " " << R.y << " " << R.z << " | " << U.x << " " << U.y << " " << U.z << "\n";
