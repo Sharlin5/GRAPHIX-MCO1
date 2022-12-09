@@ -1,11 +1,11 @@
 #version 330 core
 
-uniform sampler2D tex0, tex1, norm0;
+uniform sampler2D tex0, tex1, tex2, tex3, norm0;
 uniform vec3 lightPos, lightColor, ambientColor, cameraPos;
 uniform float ambientStr, specStr, specPhong, intensity;
 
-in vec2 texCoords;
-in vec3 normCoords;
+in vec2 texCoord;
+in vec3 normCoord;
 in vec3 fragPos;
 
 in mat3 TBN;
@@ -30,7 +30,7 @@ void main(){
 	if(pixelColor3.a < 0.1){
 		discard;
 
-	vec3 normal = texture(norm0, texCoords).rgb;
+	normal = texture(norm0, texCoord).rgb;
 	normal = normalize(normal * 2.0 - 1.0);
 	normal = normalize(TBN * normal);
 
@@ -47,5 +47,8 @@ void main(){
 	float spec = pow(max(dot(reflectDir, viewDir), 0.1), specPhong);
 	vec3 specColor = specStr * lightColor;
 	
-	FragColor = vec4(specColor + diffuse + ambientCol, 1.0) * texture(tex0, texCoords) * texture(tex1, texCoords) * texture(tex2, texCoords) * texture(tex3, texCoords);
+	float distance = length(lightPos - fragPos);
+	float atten = 1.0 / (distance * distance);
+
+	FragColor = vec4(atten * (specColor + diffuse + ambientCol), 1.0) * texture(tex0, texCoord) * texture(tex1, texCoord) * texture(tex2, texCoord) * texture(tex3, texCoord), texture(norm0, normCoord);
 }

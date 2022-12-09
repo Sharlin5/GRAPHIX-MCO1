@@ -13,8 +13,8 @@ uniform mat4 projection;
 
 out mat3 TBN;
 
-out vec2 texCoords;
-out vec3 normCoords;
+out vec2 texCoord;
+out vec3 normCoord;
 out vec3 fragPos;
 
 void main(){
@@ -23,12 +23,11 @@ void main(){
 	texCoords = aTex;
 
 	mat3 modelMat = mat3(transpose(inverse(transform)));
-
-	normCoords = modelMat * vertexNormal;
+	normCoord = modelMat * vertexNormal;
 
 	vec3 T = normalize(modelMat * m_tan);
 	vec3 B = normalize(modelMat * m_btan);
-	vec3 N = normalize(normCoords);
+	vec3 N = normalize(normCoord);
 
 	TBN = mat3(T, B, N);
 

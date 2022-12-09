@@ -27,8 +27,8 @@ class Model {
 
 		Model(std::string objName, int id) {
 			this->id = id;
-			pos_x = pos_y = pos_z = rot_x = rot_y = rot_z = theta = scale_x = scale_y = scale_z = 0.0;
-			
+			pos_x = pos_y = pos_z = rot_x = rot_y = rot_z = theta = scale_x = scale_y = scale_z = theta = 0.f;
+
 			std::string objPath = "3D/";
 			if (id == 0) { 
 				objPath += "Player/"; 
@@ -160,17 +160,17 @@ class Model {
 
 			// Initialize Texture Count
 			switch (id) {
-				case 1:	// Player Sub Texture Count
-				case 7:
+				case 0:	// Player Sub Texture Count
+				case 6:
 					txtCount = 5;
 					break;
-				case 2:	// Enemy Sub Texture Count
+				case 1:	// Enemy Sub Texture Count
 					txtCount = 2;
 					break;
+				case 2:
 				case 3:
 				case 4:
 				case 5:
-				case 6:
 					txtCount = 0;
 			}
 
@@ -183,18 +183,18 @@ class Model {
 
 				// Initialize Textures
 				switch (id) {
-					case 1:
+					case 0:
 						tex_bytes[0] = stbi_load("3D/Player/SubLow0Smooth_DefaultMaterial_AO.png", &img_w[0], &img_h[0], &color_channels[0], 4);
 						tex_bytes[1] = stbi_load("3D/Player/SubLow0Smooth_DefaultMaterial_BaseColor.png", &img_w[1], &img_h[1], &color_channels[1], 4);
 						tex_bytes[2] = stbi_load("3D/Player/SubLow0Smooth_DefaultMaterial_Metallic.png", &img_w[2], &img_h[2], &color_channels[2], 4);
 						tex_bytes[3] = stbi_load("3D/Player/SubLow0Smooth_DefaultMaterial_RoughnessAlt.png", &img_w[3], &img_h[3], &color_channels[3], 4);
 						tex_bytes[4] = stbi_load("3D/Player/SubLow0Smooth_DefaultMaterial_Normal.png", &img_w[4], &img_h[4], &color_channels[4], 4);
 						break;
-					case 2:
+					case 1:
 						tex_bytes[0] = stbi_load("3D/Enemy/1/fna1.jpg", &img_w[0], &img_h[0], &color_channels[0], 0);
 						tex_bytes[1] = stbi_load("3D/Enemy/1/fna1b.jpg", &img_w[1], &img_h[1], &color_channels[1], 0);
 						break;
-					case 7:
+					case 6:
 						tex_bytes[0] = stbi_load("3D/Enemy/6/Hades_albedo.png", &img_w[0], &img_h[0], &color_channels[0], 4);
 						tex_bytes[1] = stbi_load("3D/Enemy/6/Hades_ao.png", &img_w[1], &img_h[1], &color_channels[1], 4);
 						tex_bytes[2] = stbi_load("3D/Enemy/6/Hades_metallic.png", &img_w[2], &img_h[2], &color_channels[2], 4);
@@ -203,8 +203,8 @@ class Model {
 				}
 
 				switch (id) {
-					case 1:
-					case 7:
+					case 0:
+					case 6:
 						for (int i = 0; i < txtCount; i++) {
 							glGenTextures(1, &txt[i]);
 							glActiveTexture(GL_TEXTURE0 + i);
@@ -215,7 +215,7 @@ class Model {
 							stbi_image_free(tex_bytes[i]);
 						}
 						break;
-					case 2:
+					case 1:
 						for (int i = 0; i < txtCount; i++) {
 							glGenTextures(1, &txt[i]);
 							glActiveTexture(GL_TEXTURE0 + i);
@@ -292,6 +292,46 @@ class Model {
 		void deleteData() {
 			glDeleteVertexArrays(1, &VAO);
 			glDeleteBuffers(1, &VBO);
+		}
+
+		float getPosX() {
+			return pos_x;
+		}
+
+		float getPosY() {
+			return pos_y;
+		}
+
+		float getPosZ() {
+			return pos_z;
+		}
+
+		float getRotX() {
+			return rot_x;
+		}
+
+		float getRotY() {
+			return rot_y;
+		}
+
+		float getRotZ() {
+			return rot_z;
+		}
+
+		float getScaleX() {
+			return scale_x;
+		}
+
+		float getScaleY() {
+			return scale_y;
+		}
+
+		float getScaleZ() {
+			return scale_z;
+		}
+
+		int getID() {
+			return id;
 		}
 
 		void setPos(float pos_x, float pos_y, float pos_z) {

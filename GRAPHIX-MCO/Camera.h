@@ -62,7 +62,6 @@ class Camera {
 		}
 
 		void setViewMatrix() {
-			//this->viewMatrix = glm::lookAt(cameraPos, cameraCenter, worldUp);
 			this->viewMatrix = glm::lookAt(cameraPos, cameraPos + F, U);
 		}
 
@@ -86,7 +85,11 @@ class OrthographicCamera : public Camera {
 			viewMatrix = glm::lookAt(cameraPos, cameraCenter, worldUp);
 			projectionMatrix = orthoMatrix;
 		}
-
+		
+		OrthographicCamera() {
+			cameraPos = worldUp = cameraCenter = glm::vec3(0, 0, 0);
+			viewMatrix = projectionMatrix = glm::mat4(0);
+		}
 };
 
 class PerspectiveCamera : public Camera {
@@ -105,4 +108,8 @@ class PerspectiveCamera : public Camera {
 			projectionMatrix = perspectiveMatrix;
 		}
 
+		PerspectiveCamera() {
+			cameraPos = worldUp = cameraCenter = glm::vec3(0, 0, 0);
+			viewMatrix = projectionMatrix = glm::mat4(0);
+		}
 };

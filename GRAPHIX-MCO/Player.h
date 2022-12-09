@@ -4,11 +4,15 @@ class Player {
 		Model player;
 
 	public:
+		Player() {
+
+		}
+
 		Player(glm::mat4 identityMatrix) {
 			player = Model("SubLow0Smooth", 0);
 			player.setPos(0, 0, -10.f);
 			player.setRot(0, 0, 0, 90.f);
-			player.setScale(10.f, 10.f, 10.f);
+			player.setScale(1.f, 1.f, 1.f);
 			player.initTransformationMatrix(identityMatrix);
 		}
 
