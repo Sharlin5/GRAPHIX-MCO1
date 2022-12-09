@@ -106,9 +106,9 @@ int main(void)
     U = glm::cross(R, F);
     perspectiveCam.setCameraFRU(F, R, U);
 
-    cameraPos = glm::vec3(0.f, 90.f, 15.f);
+    cameraPos = glm::vec3(0.f, 70.f, 15.f);
     cameraCenter = glm::vec3(0.f, 3.f, 0.f);
-    glm::vec3 orthoworldUp = glm::normalize(glm::vec3(0.f, 180.f, 0.f));
+    glm::vec3 orthoworldUp = glm::normalize(glm::vec3(0.f, 90.f, 0.f));
     orthoCam = OrthographicCamera(cameraPos, cameraCenter, orthoworldUp, projectionMatrix);
     F = cameraCenter - cameraPos;
     F = glm::normalize(F);
@@ -150,8 +150,7 @@ int main(void)
             currCam = orthoCam;
             currCam.setOrthoView();
         }
-        
-        
+
         std::cout << "CameraPos: " << currCam.getCameraPos().x << " " << currCam.getCameraPos().y << " " << currCam.getCameraPos().z << "\n";
         //std::cout << "CameraPos: " << F.x << " "  << F.y << " " << F.z << " | " << R.x << " " << R.y << " " << R.z << " | " << U.x << " " << U.y << " " << U.z << "\n";
 
@@ -171,6 +170,7 @@ int main(void)
         
         for (int i = 0; i < enemies.size(); i++) {
             enemies[i].initTransformationMatrix(identityMatrix);
+            enemies[i].setScale(5, 5, 5);
 
             switch (enemies[i].getID()) {
                 case 1:
@@ -189,12 +189,16 @@ int main(void)
         // change to modPos_x, modPos_y, modPos_z 
         //player.movePlayer(0, 0, 0);
 
-        //draw all models
-        /*
-        for()
-        enemies.draw()
-        
-        */
+        //update light intensity
+        if (currIntensity == 1) {
+            lightIntensity = 0.0;
+        } else if (currIntensity == 2) {
+            lightIntensity = 1.0;
+        } else if (currIntensity == 3) {
+            lightIntensity = 1.5;
+        }
+
+        pointLight.setIntensity(lightIntensity);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
@@ -255,10 +259,12 @@ void Key_Callback(GLFWwindow* window, int key, int scanCode, int action, int mod
 
         if (key == GLFW_KEY_A) {
             // turn left
+
         }
 
         if (key == GLFW_KEY_D) {
             // turn right
+
         }
 
         // if pos += 0.5 > 0 do not register this.
