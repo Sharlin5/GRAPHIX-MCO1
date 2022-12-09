@@ -44,8 +44,6 @@ OrthographicCamera orthoCam;
 Player player;
 std::vector<Model> enemies;
 
-glm::vec3 temp = glm::vec3(0,0,0);
-
 //insert cursor position values
 
 void Key_Callback(GLFWwindow* window, int key, int scanCode, int action, int mods);
@@ -114,7 +112,7 @@ int main(void)
     orthoCam = OrthographicCamera(cameraPos, cameraCenter, orthoworldUp, projectionMatrix);
     F = cameraCenter - cameraPos;
     F = glm::normalize(F);
-    R = glm::cross(F, worldUp);
+    R = glm::cross(F, orthoworldUp);
     U = glm::cross(R, F);
     orthoCam.setCameraFRU(F, R, U);
     
@@ -146,15 +144,12 @@ int main(void)
         if (isPerspective){
             currCam = perspectiveCam;
             currCam.setCameraFRU(F, R, U);
-            //currCam.setCameraPos(perspectiveCam.getCameraPos() + temp);
             currCam.setViewMatrix();
         }
         else {
             currCam = orthoCam;
             currCam.setOrthoView();
         }
-
-
 
         std::cout << "CameraPos: " << currCam.getCameraPos().x << " " << currCam.getCameraPos().y << " " << currCam.getCameraPos().z << "\n";
         //std::cout << "CameraPos: " << F.x << " "  << F.y << " " << F.z << " | " << R.x << " " << R.y << " " << R.z << " | " << U.x << " " << U.y << " " << U.z << "\n";
@@ -226,10 +221,6 @@ int main(void)
 
 void Key_Callback(GLFWwindow* window, int key, int scanCode, int action, int mods) {
     float cameraSpeed = 300.0f * deltaTime;     // Camera Speed/Velocity
-    Camera currCam;
-
-    if (isPerspective) currCam = perspectiveCam;
-    else currCam = orthoCam;
     
     // condition 1st to 3rd person perspective
     if (isPerspective && key == GLFW_KEY_1 && action == GLFW_PRESS) {
@@ -256,7 +247,7 @@ void Key_Callback(GLFWwindow* window, int key, int scanCode, int action, int mod
             // Forward
             perspectiveCam.setCameraPos(perspectiveCam.getCameraPos() + cameraSpeed * perspectiveCam.getCameraF());
             player.getPlayer().setPos(perspectiveCam.getCameraPos().x, perspectiveCam.getCameraPos().y, perspectiveCam.getCameraPos().z);
-            perspectiveCam.setViewMatrix();
+            //perspectiveCam.setViewMatrix();
             std::cout << perspectiveCam.getCameraPos().x << ' ' << perspectiveCam.getCameraPos().y << ' ' << perspectiveCam.getCameraPos().z << "\n";
         }
 
@@ -264,7 +255,7 @@ void Key_Callback(GLFWwindow* window, int key, int scanCode, int action, int mod
             // Backward
             perspectiveCam.setCameraPos(perspectiveCam.getCameraPos() - cameraSpeed * perspectiveCam.getCameraF());
             player.getPlayer().setPos(perspectiveCam.getCameraPos().x, perspectiveCam.getCameraPos().y, perspectiveCam.getCameraPos().z);
-            perspectiveCam.setViewMatrix();
+            //perspectiveCam.setViewMatrix();
             std::cout << perspectiveCam.getCameraPos().x << ' ' << perspectiveCam.getCameraPos().y << ' ' << perspectiveCam.getCameraPos().z << "\n";
         }
 
@@ -272,7 +263,7 @@ void Key_Callback(GLFWwindow* window, int key, int scanCode, int action, int mod
             // turn left
             perspectiveCam.setCameraPos(perspectiveCam.getCameraPos() - cameraSpeed * glm::normalize(glm::cross(perspectiveCam.getCameraF(), perspectiveCam.getCameraU())));
             player.getPlayer().setPos(perspectiveCam.getCameraPos().x, perspectiveCam.getCameraPos().y, perspectiveCam.getCameraPos().z);
-            perspectiveCam.setViewMatrix();
+            //perspectiveCam.setViewMatrix();
             std::cout << perspectiveCam.getCameraPos().x << ' ' << perspectiveCam.getCameraPos().y << ' ' << perspectiveCam.getCameraPos().z << "\n";
         }
 
@@ -280,7 +271,7 @@ void Key_Callback(GLFWwindow* window, int key, int scanCode, int action, int mod
             // turn right
             perspectiveCam.setCameraPos(perspectiveCam.getCameraPos() + cameraSpeed * glm::normalize(glm::cross(perspectiveCam.getCameraF(), perspectiveCam.getCameraU())));
             player.getPlayer().setPos(perspectiveCam.getCameraPos().x, perspectiveCam.getCameraPos().y, perspectiveCam.getCameraPos().z);
-            perspectiveCam.setViewMatrix();
+            //perspectiveCam.setViewMatrix();
             std::cout << perspectiveCam.getCameraPos().x << ' ' << perspectiveCam.getCameraPos().y << ' ' << perspectiveCam.getCameraPos().z << "\n";
         }
 
