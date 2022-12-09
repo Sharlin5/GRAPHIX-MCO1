@@ -64,6 +64,6 @@ void main(){
 
 	FragColor = result * texture(tex0, texCoord);
 	// color change
-	FragColor = result * ;
+	FragColor = result * vec4(v_Color, 1.0);
 
 }
