@@ -1,36 +1,36 @@
 #version 330 core
 
-uniform sampler2D tex0;
-uniform sampler2D tex1;
-uniform sampler2D tex2;
-uniform sampler2D tex3;
-uniform sampler2D norm0;
+uniform sampler2D tex0, tex1, tex2, tex3, norm0;
+uniform vec3 lightPos, lightColor, ambientColor, cameraPos;
+uniform float ambientStr, specStr, specPhong, intensity;
 
-uniform vec3 lightPos;
-uniform vec3 lightColor;
-uniform vec3 ambientColor;
-uniform vec3 cameraPos;
-
-uniform float ambientStr;
-uniform float specStr;
-uniform float specPhong;
-uniform float intensity;
-
-in vec2 texCoord;
-in vec3 normCoord;
+in vec2 texCoords;
+in vec3 normCoords;
 in vec3 fragPos;
-
 in mat3 TBN;
 
 out vec4 FragColor;
 
 void main(){
-	vec4 pixelColor0 = texture(tex0, texCoord);
-	vec4 pixelColor1 = texture(tex1, texCoord);
-	vec4 pixelColor2 = texture(tex2, texCoord);
-	vec4 pixelColor3 = texture(tex3, texCoord);
+	vec4 pixelColor0 = texture(tex0, texCoords);
+	vec4 pixelColor1 = texture(tex1, texCoords);
+	vec4 pixelColor2 = texture(tex2, texCoords);
+	vec4 pixelColor3 = texture(tex3, texCoords);
 
-	normal = texture(norm0, texCoord).rgb;
+	if(pixelColor0.a < 0.1){
+		discard;
+	}
+	if(pixelColor1.a < 0.1){
+		discard;
+	}
+	if(pixelColor2.a < 0.1){
+		discard;
+	}
+	if(pixelColor3.a < 0.1){
+		discard;
+	}
+
+	normal = texture(norm0, texCoords).rgb;
 	normal = normalize(normal * 2.0 - 1.0);
 	normal = normalize(TBN * normal);
 
@@ -50,5 +50,5 @@ void main(){
 	float distance = length(lightPos - fragPos);
 	float atten = 1.0 / (distance * distance);
 
-	FragColor = vec4(atten * (specColor + diffuse + ambientCol), 1.0) * pixelColor0 * pixelColor 1 * pixelColor2 * pixelColor3 * normal;
+	FragColor = vec4(specColor + diffuse + ambientCol, 1.0) * pixelColor0;
 }

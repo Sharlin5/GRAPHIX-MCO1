@@ -14,7 +14,7 @@ class Model {
 		tinyobj::attrib_t attributes;
 		std::vector<GLfloat> fullVertexData;
 		GLuint VAO, VBO, EBO;
-		std::vector<GLuint> mesh_indices, txt;
+		std::vector<GLuint> mesh_indices, mesh_indices1, txt;
 		std::vector<glm::vec3> tangents, bitangents;
 		std::vector<unsigned char*> tex_bytes;
 		glm::mat4 transformationMatrix;
@@ -25,16 +25,21 @@ class Model {
 			warning = error = "";
 		}
 
-		Model(std::string objName) {
-			pos_x = pos_y = pos_z = rot_x = rot_y = rot_z = 0.f;
+		Model(std::string objName, int id, bool isBasic) {
+			pos_x = pos_y = pos_z = rot_x = rot_z = 0.f;
 			theta = 90.f;
-			scale_x = scale_y = scale_z = theta = 10.f;
+			rot_y = 1.f;
+			scale_x = scale_y = scale_z = theta = 0.05f;
 			
 			std::string objPath = "3D/";
-			objPath += "Player/";
+			if (id == 0) {
+				objPath += "Player/";
+			}
+			else {
+				objPath += "Enemy/" + std::to_string(id) + "/";
+			}
 			objPath += objName + ".obj";
 			bool success = tinyobj::LoadObj(&attributes, &shapes, &materials, &warning, &error, objPath.c_str());
-			std::cout << success << " " << objPath << "\n";
 
 			for (int i = 0; i < shapes[0].mesh.indices.size(); i++) {
 				tinyobj::index_t vData = shapes[0].mesh.indices[i];
@@ -111,13 +116,17 @@ class Model {
 
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 			glBindVertexArray(0);
+
+			glEnable(GL_DEPTH_TEST);
 		}
 
 		Model(std::string objName, int id) {
 			this->id = id;
-			pos_x = pos_y = pos_z = rot_x = rot_y = rot_z = 0.f;
+			pos_x = pos_y = pos_z = 10.f * id;
+			rot_x = rot_z = 0.f;
 			theta = 90.f;
-			scale_x = scale_y = scale_z = theta = 10.f;
+			rot_y = 1.f;
+			scale_x = scale_y = scale_z = theta = 0.05f;
 
 			std::string objPath = "3D/";
 			if (id == 0) { 
@@ -128,10 +137,9 @@ class Model {
 			}
 			objPath += objName + ".obj";
 			bool success = tinyobj::LoadObj(&attributes, &shapes, &materials, &warning, &error, objPath.c_str());
-			std::cout << success << " " << objPath << "\n";
 
 			for (int i = 0; i < shapes[0].mesh.indices.size(); i++) {
-				mesh_indices.push_back(shapes[0].mesh.indices[i].vertex_index);
+				mesh_indices1.push_back(shapes[0].mesh.indices[i].vertex_index);
 			}
 
 			//Get tangents and bitangents
@@ -190,32 +198,32 @@ class Model {
 				tinyobj::index_t vData = shapes[0].mesh.indices[i];
 
 				int vertexIndex = vData.vertex_index * 3;
-				int normalIndex = vData.normal_index * 3;
 				int uvIndex = vData.texcoord_index * 2;
+				int normalIndex = vData.normal_index * 3;
 
 				// Set X, Y, Z vertex values
-				fullVertexData.push_back(attributes.vertices[vertexIndex]);
-				fullVertexData.push_back(attributes.vertices[vertexIndex + 1]);
-				fullVertexData.push_back(attributes.vertices[vertexIndex + 2]);
+				this->fullVertexData.push_back(attributes.vertices[vertexIndex]);
+				this->fullVertexData.push_back(attributes.vertices[vertexIndex + 1]);
+				this->fullVertexData.push_back(attributes.vertices[vertexIndex + 2]);
 
 				// Set X, Y, Z normals
-				fullVertexData.push_back(attributes.normals[normalIndex]);
-				fullVertexData.push_back(attributes.normals[normalIndex + 1]);
-				fullVertexData.push_back(attributes.normals[normalIndex + 2]);
+				this->fullVertexData.push_back(attributes.normals[normalIndex]);
+				this->fullVertexData.push_back(attributes.normals[normalIndex + 1]);
+				this->fullVertexData.push_back(attributes.normals[normalIndex + 2]);
 
 				// Set U, V coordinate values
-				fullVertexData.push_back(attributes.texcoords[uvIndex]);
-				fullVertexData.push_back(attributes.texcoords[uvIndex + 1]);
+				this->fullVertexData.push_back(attributes.texcoords[uvIndex]);
+				this->fullVertexData.push_back(attributes.texcoords[uvIndex + 1]);
 
 				// Set Tangent values
-				fullVertexData.push_back(tangents[i].x);
-				fullVertexData.push_back(tangents[i].y);
-				fullVertexData.push_back(tangents[i].z);
+				this->fullVertexData.push_back(tangents[i].x);
+				this->fullVertexData.push_back(tangents[i].y);
+				this->fullVertexData.push_back(tangents[i].z);
 
 				// Set Bitangent values
-				fullVertexData.push_back(bitangents[i].x);
-				fullVertexData.push_back(bitangents[i].y);
-				fullVertexData.push_back(bitangents[i].z);
+				this->fullVertexData.push_back(bitangents[i].x);
+				this->fullVertexData.push_back(bitangents[i].y);
+				this->fullVertexData.push_back(bitangents[i].z);
 			}
 
 			//Generate and Assign ID to VAO
@@ -228,16 +236,16 @@ class Model {
 			glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
 			// Assign Mesh Data to VBO
-			glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT) * fullVertexData.size(), fullVertexData.data(), GL_DYNAMIC_DRAW);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(GL_FLOAT) * this->fullVertexData.size(), this->fullVertexData.data(), GL_DYNAMIC_DRAW);
 
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(GL_FLOAT), (void*)0);
-			GLintptr normPtr = 3 * sizeof(GLfloat);
+			GLintptr normPtr = 3 * sizeof(GL_FLOAT);
 			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(GL_FLOAT), (void*)normPtr);
-			GLintptr uvPtr = 6 * sizeof(GLfloat);
+			GLintptr uvPtr = 6 * sizeof(GL_FLOAT);
 			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 14 * sizeof(GL_FLOAT), (void*)uvPtr);
-			GLintptr tangentPtr = 8 * sizeof(float);
+			GLintptr tangentPtr = 8 * sizeof(GL_FLOAT);
 			glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(GL_FLOAT), (void*)tangentPtr);
-			GLintptr bitangentPtr = 11 * sizeof(float);
+			GLintptr bitangentPtr = 11 * sizeof(GL_FLOAT);
 			glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 14 * sizeof(GL_FLOAT), (void*)bitangentPtr);
 
 			glEnableVertexAttribArray(0);
@@ -267,7 +275,6 @@ class Model {
 			}
 
 			if (txtCount > 0) {
-				//tex_bytes = std::vector<unsigned char*>(txtCount, NULL);
 				img_w = std::vector<int>(txtCount);
 				img_h = std::vector<int>(txtCount);
 				color_channels = std::vector<int>(txtCount);
@@ -299,28 +306,28 @@ class Model {
 					case 6:
 						for (int i = 0; i < txtCount; i++) {
 							glGenTextures(1, &txt[i]);
-							glActiveTexture(GL_TEXTURE0 + i);
-							glBindTexture(GL_TEXTURE_2D, txt[i]);
-							glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img_w[i], img_h[i], 0, GL_RGBA, GL_UNSIGNED_BYTE, tex_bytes[i]);
+							glActiveTexture(GL_TEXTURE0);
+							glBindTexture(GL_TEXTURE_2D, this->txt[i]);
+							glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this->img_w[i], this->img_h[i], 0, GL_RGBA, GL_UNSIGNED_BYTE, this->tex_bytes[i]);
 							glGenerateMipmap(GL_TEXTURE_2D);
 
 							stbi_image_free(tex_bytes[i]);
+							glEnable(GL_DEPTH_TEST);
 						}
 						break;
 					case 1:
 						for (int i = 0; i < txtCount; i++) {
 							glGenTextures(1, &txt[i]);
-							glActiveTexture(GL_TEXTURE0 + i);
-							glBindTexture(GL_TEXTURE_2D, txt[i]);
-							glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img_w[i], img_h[i], 0, GL_RGB, GL_UNSIGNED_BYTE, tex_bytes[i]);
+							glActiveTexture(GL_TEXTURE0);
+							glBindTexture(GL_TEXTURE_2D, this->txt[i]);
+							glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this->img_w[i], this->img_h[i], 0, GL_RGB, GL_UNSIGNED_BYTE, this->tex_bytes[i]);
 							glGenerateMipmap(GL_TEXTURE_2D);
 
 							stbi_image_free(tex_bytes[i]);
+							glEnable(GL_DEPTH_TEST);
 						}
 				}
 			}
-
-			glEnable(GL_DEPTH_TEST);
 		}
 
 		void initTransformationMatrix(glm::mat4 identityMatrix) {
@@ -336,7 +343,7 @@ class Model {
 			glUseProgram(shaderProgram);
 
 			//set color
-			glm::vec3 colorMatrix3 = glm::vec3(0.f, 0.f, 0.5f);
+			glm::vec3 colorMatrix3 = glm::vec3(0.f, 0.f, 1.f);
 			unsigned int colorLoc3 = glGetUniformLocation(shaderProgram, "aColor");
 			glUniform3fv(colorLoc3, 1, glm::value_ptr(colorMatrix3));
 
@@ -362,14 +369,14 @@ class Model {
 			light.linkShader(shaderProgram, cam);
 
 			GLuint texAddress;
-			/*
+			
 			if (txtCount > 0) {
 				switch (id) {
-					case 1:
-					case 7:
+					case 0:
+					case 6:
 						for (int i = 0; i < txtCount - 1; i++) {
 							texAddress = glGetUniformLocation(shaderProgram, "tex" + i);
-							glActiveTexture(GL_TEXTURE0 + i);
+							glActiveTexture(GL_TEXTURE0);
 							glBindTexture(GL_TEXTURE_2D, txt[i]);
 							glUniform1i(texAddress, i);
 						}
@@ -379,16 +386,15 @@ class Model {
 						glBindTexture(GL_TEXTURE_2D, txt[4]);
 						glUniform1i(texAddress, 4);
 						break;
-					case 2:
+					case 1:
 						for (int i = 0; i < txtCount; i++) {
 							texAddress = glGetUniformLocation(shaderProgram, "tex" + i);
-							glActiveTexture(GL_TEXTURE0 + i);
+							glActiveTexture(GL_TEXTURE0);
 							glBindTexture(GL_TEXTURE_2D, txt[i]);
 							glUniform1i(texAddress, i);
 						}
 				}
 			}
-			*/
 
 			//set color
 			glm::vec3 colorMatrix3 = glm::vec3(0.f, 0.f, 0.5f);

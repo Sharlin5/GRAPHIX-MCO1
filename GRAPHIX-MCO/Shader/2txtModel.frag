@@ -7,7 +7,6 @@ uniform float ambientStr, specStr, specPhong, intensity;
 in vec2 texCoords;
 in vec3 normCoords;
 in vec3 fragPos;
-
 in mat3 TBN;
 
 out vec4 FragColor;
@@ -40,5 +39,5 @@ void main(){
 	float spec = pow(max(dot(reflectDir, viewDir), 0.1), specPhong);
 	vec3 specColor = specStr * lightColor;
 	
-	FragColor = vec4(specColor + diffuse + ambientCol, 1.0) * texture(tex0, texCoords) * texture(tex1, texCoords);
+	FragColor = vec4(specColor + diffuse + ambientCol, 1.0) * pixelColor0 * pixelColor1;
 }

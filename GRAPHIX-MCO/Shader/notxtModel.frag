@@ -17,15 +17,15 @@ out vec4 FragColor;
 //uniform float specStr;
 //uniform float specPhong;
 
-//in vec2 texCoord;
-//in vec3 normCoord;
+//in vec2 texCoords;
+//in vec3 normCoords;
 in vec3 fragPos;
 
 // color change
 in vec3 v_Color;
 
 void main(){
-	//vec3 normal = normalize(normCoord);
+	//vec3 normal = normalize(normCoords);
 	
 	//vec3 lightDir = normalize(dirLightPos - fragPos);
 
@@ -62,7 +62,7 @@ void main(){
 	//point light
 	//result += vec4(specCol + diffuse + ambientCol, 1.0);
 
-	//FragColor = result * texture(tex0, texCoord);
+	//FragColor = result * texture(tex0, texCoords);
 	// color change
 	FragColor = vec4(v_Color, 1.0);
 
