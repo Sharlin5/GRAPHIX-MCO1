@@ -28,7 +28,7 @@ class Model {
 		Model(std::string objName) {
 			pos_x = pos_y = pos_z = rot_x = rot_y = rot_z = 0.f;
 			theta = 90.f;
-			scale_x = scale_y = scale_z = theta = 1.f;
+			scale_x = scale_y = scale_z = theta = 10.f;
 			
 			std::string objPath = "3D/";
 			objPath += "Player/";
@@ -40,9 +40,7 @@ class Model {
 				tinyobj::index_t vData = shapes[0].mesh.indices[i];
 
 				int vertexIndex = vData.vertex_index * 3;
-
 				int normalIndex = vData.normal_index * 3;
-
 				int uvIndex = vData.texcoord_index * 2;
 
 				// x
@@ -119,7 +117,7 @@ class Model {
 			this->id = id;
 			pos_x = pos_y = pos_z = rot_x = rot_y = rot_z = 0.f;
 			theta = 90.f;
-			scale_x = scale_y = scale_z = theta = 1.f;
+			scale_x = scale_y = scale_z = theta = 10.f;
 
 			std::string objPath = "3D/";
 			if (id == 0) { 
@@ -131,6 +129,10 @@ class Model {
 			objPath += objName + ".obj";
 			bool success = tinyobj::LoadObj(&attributes, &shapes, &materials, &warning, &error, objPath.c_str());
 			std::cout << success << " " << objPath << "\n";
+
+			for (int i = 0; i < shapes[0].mesh.indices.size(); i++) {
+				mesh_indices.push_back(shapes[0].mesh.indices[i].vertex_index);
+			}
 
 			//Get tangents and bitangents
 			for (int i = 0; i < shapes[0].mesh.indices.size(); i += 3) {
@@ -172,7 +174,6 @@ class Model {
 				glm::vec2 deltaUV2 = uv3 - uv1;
 
 				float r = 1.f / ((deltaUV1.x * deltaUV2.y) - (deltaUV1.y * deltaUV2.x));
-
 				glm::vec3 tangent = (deltaPos1 * deltaUV2.y - deltaPos2 * deltaUV1.y) * r;
 				glm::vec3 bitangent = (deltaPos2 * deltaUV1.x - deltaPos1 * deltaUV2.x) * r;
 
@@ -266,31 +267,31 @@ class Model {
 			}
 
 			if (txtCount > 0) {
-				tex_bytes = std::vector<unsigned char*>(txtCount, 0);
-				img_w = std::vector<int>(txtCount, 0);
-				img_h = std::vector<int>(txtCount, 0);
-				color_channels = std::vector<int>(txtCount, 0);
-				txt = std::vector<GLuint>(txtCount, 0);
+				//tex_bytes = std::vector<unsigned char*>(txtCount, NULL);
+				img_w = std::vector<int>(txtCount);
+				img_h = std::vector<int>(txtCount);
+				color_channels = std::vector<int>(txtCount);
+				txt = std::vector<GLuint>(txtCount);
 
 				// Initialize Textures
 				switch (id) {
 					case 0:
-						tex_bytes[0] = stbi_load("3D/Player/SubLow0Smooth_DefaultMaterial_AO.png", &img_w[0], &img_h[0], &color_channels[0], 4);
-						tex_bytes[1] = stbi_load("3D/Player/SubLow0Smooth_DefaultMaterial_BaseColor.png", &img_w[1], &img_h[1], &color_channels[1], 4);
-						tex_bytes[2] = stbi_load("3D/Player/SubLow0Smooth_DefaultMaterial_Metallic.png", &img_w[2], &img_h[2], &color_channels[2], 4);
-						tex_bytes[3] = stbi_load("3D/Player/SubLow0Smooth_DefaultMaterial_RoughnessAlt.png", &img_w[3], &img_h[3], &color_channels[3], 4);
-						tex_bytes[4] = stbi_load("3D/Player/SubLow0Smooth_DefaultMaterial_Normal.png", &img_w[4], &img_h[4], &color_channels[4], 4);
+						tex_bytes.push_back(stbi_load("3D/Player/SubLow0Smooth_DefaultMaterial_AO.png", &img_w[0], &img_h[0], &color_channels[0], 4));
+						tex_bytes.push_back(stbi_load("3D/Player/SubLow0Smooth_DefaultMaterial_BaseColor.png", &img_w[1], &img_h[1], &color_channels[1], 4));
+						tex_bytes.push_back(stbi_load("3D/Player/SubLow0Smooth_DefaultMaterial_Metallic.png", &img_w[2], &img_h[2], &color_channels[2], 4));
+						tex_bytes.push_back(stbi_load("3D/Player/SubLow0Smooth_DefaultMaterial_RoughnessAlt.png", &img_w[3], &img_h[3], &color_channels[3], 4));
+						tex_bytes.push_back(stbi_load("3D/Player/SubLow0Smooth_DefaultMaterial_Normal.png", &img_w[4], &img_h[4], &color_channels[4], 4));
 						break;
 					case 1:
-						tex_bytes[0] = stbi_load("3D/Enemy/1/fna1.jpg", &img_w[0], &img_h[0], &color_channels[0], 0);
-						tex_bytes[1] = stbi_load("3D/Enemy/1/fna1b.jpg", &img_w[1], &img_h[1], &color_channels[1], 0);
+						tex_bytes.push_back(stbi_load("3D/Enemy/1/fna1.jpg", &img_w[0], &img_h[0], &color_channels[0], 0));
+						tex_bytes.push_back(stbi_load("3D/Enemy/1/fna1b.jpg", &img_w[1], &img_h[1], &color_channels[1], 0));
 						break;
 					case 6:
-						tex_bytes[0] = stbi_load("3D/Enemy/6/Hades_albedo.png", &img_w[0], &img_h[0], &color_channels[0], 4);
-						tex_bytes[1] = stbi_load("3D/Enemy/6/Hades_ao.png", &img_w[1], &img_h[1], &color_channels[1], 4);
-						tex_bytes[2] = stbi_load("3D/Enemy/6/Hades_metallic.png", &img_w[2], &img_h[2], &color_channels[2], 4);
-						tex_bytes[3] = stbi_load("3D/Enemy/6/Hades_roughness.png", &img_w[3], &img_h[3], &color_channels[3], 4);
-						tex_bytes[4] = stbi_load("3D/Enemy/6/Hades_normal.png", &img_w[4], &img_h[4], &color_channels[4], 4);
+						tex_bytes.push_back(stbi_load("3D/Enemy/6/Hades_albedo.png", &img_w[0], &img_h[0], &color_channels[0], 4));
+						tex_bytes.push_back(stbi_load("3D/Enemy/6/Hades_ao.png", &img_w[1], &img_h[1], &color_channels[1], 4));
+						tex_bytes.push_back(stbi_load("3D/Enemy/6/Hades_metallic.png", &img_w[2], &img_h[2], &color_channels[2], 4));
+						tex_bytes.push_back(stbi_load("3D/Enemy/6/Hades_roughness.png", &img_w[3], &img_h[3], &color_channels[3], 4));
+						tex_bytes.push_back(stbi_load("3D/Enemy/6/Hades_normal.png", &img_w[4], &img_h[4], &color_channels[4], 4));
 				}
 
 				switch (id) {

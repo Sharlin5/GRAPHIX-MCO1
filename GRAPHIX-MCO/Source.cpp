@@ -123,10 +123,10 @@ int main(void)
 
     // Load Enemy Models
     enemies.push_back(Model("Seaview_submarine", 1));
-    enemies.push_back(Model("11098_submarine_v4", 2));
-    enemies.push_back(Model("submarine", 3));
-    enemies.push_back(Model("Cyclops_Subnautica", 4));
-    enemies.push_back(Model("Submarine", 5));
+    //enemies.push_back(Model("11098_submarine_v4"));
+    //enemies.push_back(Model("submarine"));
+    //enemies.push_back(Model("Cyclops_Subnautica", 4));
+    //enemies.push_back(Model("Submarine", 5));
     enemies.push_back(Model("Hades_Carrier", 6));
 
     /* Loop until the user closes the window */
@@ -152,7 +152,7 @@ int main(void)
             currCam.setOrthoView();
         }
 
-        std::cout << "CameraPos: " << currCam.getCameraPos().x << " " << currCam.getCameraPos().y << " " << currCam.getCameraPos().z << "\n";
+        //std::cout << "CameraPos: " << currCam.getCameraPos().x << " " << currCam.getCameraPos().y << " " << currCam.getCameraPos().z << "\n";
         //std::cout << "CameraPos: " << F.x << " "  << F.y << " " << F.z << " | " << R.x << " " << R.y << " " << R.z << " | " << U.x << " " << U.y << " " << U.z << "\n";
 
         //if (isPerspective) {
