@@ -134,6 +134,9 @@ int main(void)
     enemies[1].setRot(-90.f, 0.f, 0.f, 90.f);       // 11090_submarine_v4
     enemies[1].setScale(0.003f, 0.003f, 0.003f);
     enemies[2].setScale(0.3f, 0.3f, 0.3f);          // Cat_Low
+    float temp_x = enemies[2].getPosX();
+    float temp_z = enemies[2].getPosZ();
+    enemies[2].setPos(temp_x, -8.f, temp_z);// Cat_Low
     enemies[3].setScale(1.f, 1.f, 1.f);             // Cyclops_Subnautica
     enemies[3].setRot(0.f, 90.f, 0.f, 90.f);
     enemies[4].setScale(0.01f, 0.01f, 0.01f);       // Submarine
