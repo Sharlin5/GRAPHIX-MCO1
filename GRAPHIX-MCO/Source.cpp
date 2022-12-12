@@ -133,7 +133,8 @@ int main(void)
        Link: https://free3d.com/3d-model/submarine-v4--863722.html */
     enemies.push_back(Model("11098_submarine_v4", 2));
 
-    /*
+    /*  
+        Link: https://sketchfab.com/3d-models/cat-low-poly-88c519da2bdc485eac3f63e6e444a404
     */
     enemies.push_back(Model("Cat_Low", 3));
 
@@ -145,22 +146,32 @@ int main(void)
        Link: https://www.turbosquid.com/3d-models/free-submarine-3d-model/708103 */
     enemies.push_back(Model("Submarine", 5));
 
-    /* Dark Submarineby by julien-4 (CGTrader)
+    /* Dark Submarine by by julien-4 (CGTrader)
        Link: https://www.cgtrader.com/free-3d-models/vehicle/other/submarine-6783f21e-dd4c-4ded-ae8a-0be8ec46767d */
     enemies.push_back(Model("Dark_Submarine", 6));
 
+    float temp_x, temp_z;
     // Manually set each model's rot and scale values
     enemies[0].setScale(0.05f, 0.05f, 0.05f);       // Seaview Submarine
+
     enemies[1].setRot(-90.f, 0.f, 0.f, 90.f);       // Submarine v4
     enemies[1].setScale(0.003f, 0.003f, 0.003f);
+    temp_z = enemies[1].getPosZ() - 25.f;
+    enemies[1].setPos(50.f, -50.f, temp_z);
+    
     enemies[2].setScale(0.3f, 0.3f, 0.3f);          // Cat_Low
-    float temp_x = enemies[2].getPosX();
-    float temp_z = enemies[2].getPosZ();
-    enemies[2].setPos(temp_x, -8.f, temp_z);// Cat_Low
+    temp_x = enemies[2].getPosX();
+    temp_z = enemies[2].getPosZ();
+    enemies[2].setPos(temp_x, -15.f, temp_z);// Cat_Low
+    
     enemies[3].setScale(1.f, 1.f, 1.f);             // Cyclops_Subnautica
     enemies[3].setRot(0.f, 90.f, 0.f, 90.f);
+    enemies[3].setPos(-20, -15.f, 25);
+
     enemies[4].setScale(0.01f, 0.01f, 0.01f);       // Submarine
     enemies[4].setRot(0.f, 90.f, 0.f, 90.f);
+    enemies[4].setPos(10, -30.f, 35);
+
     enemies[5].setScale(0.1f, 0.1f, 0.1f);          // Dark Submarine
     enemies[5].setPos(enemies[5].getPosX(), enemies[5].getPosY() - 25.f, -85.f);
 
