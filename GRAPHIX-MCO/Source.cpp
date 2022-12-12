@@ -122,15 +122,33 @@ int main(void)
     player = Player(identityMatrix);
 
     // Load Enemy Models
+
+    /* Seaview Submarine by herminio (Free3D)
+       Link: https://free3d.com/3d-model/seaview-submarine-78646.html */
     enemies.push_back(Model("Seaview_submarine", 1));
+
+    /* 
+    */
     enemies.push_back(Model("11098_submarine_v4", 2));
+
+    /*
+    */
     enemies.push_back(Model("Cat_Low", 3));
+
+    /* Cyclops Subnautica by Naudaff3D (CGTrader)
+    * Link: https://www.cgtrader.com/free-3d-models/vehicle/other/cyclops-subnautica */
     enemies.push_back(Model("Cyclops_Subnautica", 4));
+
+    /* Submarine by ptrojan (TurboSquid)
+       Link: https://www.turbosquid.com/3d-models/free-submarine-3d-model/708103 */
     enemies.push_back(Model("Submarine", 5));
+
+    /* Hades Carrier by Crazycatdev (TurboSquid)
+       Link: https://www.turbosquid.com/3d-models/hades-cruiser-obj-free/1133051 */
     enemies.push_back(Model("Hades_Carrier", 6));
 
     // Manually set each model's rot and scale values
-    enemies[0].setScale(0.05f, 0.05f, 0.05f);       // Seaview_submaring
+    enemies[0].setScale(0.05f, 0.05f, 0.05f);       // Seaview_submarine
     enemies[1].setRot(-90.f, 0.f, 0.f, 90.f);       // 11090_submarine_v4
     enemies[1].setScale(0.003f, 0.003f, 0.003f);
     enemies[2].setScale(0.3f, 0.3f, 0.3f);          // Cat_Low
