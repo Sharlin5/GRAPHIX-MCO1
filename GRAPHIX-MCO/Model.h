@@ -25,108 +25,14 @@ class Model {
 			warning = error = "";
 		}
 
-		Model(std::string objName, int id, bool isBasic) {
-			pos_x = pos_y = pos_z = rot_x = rot_z = 0.f;
-			theta = 90.f;
-			rot_y = 1.f;
-			scale_x = scale_y = scale_z = theta = 0.05f;
-			
-			std::string objPath = "3D/";
-			if (id == 0) {
-				objPath += "Player/";
-			}
-			else {
-				objPath += "Enemy/" + std::to_string(id) + "/";
-			}
-			objPath += objName + ".obj";
-			bool success = tinyobj::LoadObj(&attributes, &shapes, &materials, &warning, &error, objPath.c_str());
-
-			for (int i = 0; i < shapes[0].mesh.indices.size(); i++) {
-				tinyobj::index_t vData = shapes[0].mesh.indices[i];
-
-				int vertexIndex = vData.vertex_index * 3;
-				int normalIndex = vData.normal_index * 3;
-				int uvIndex = vData.texcoord_index * 2;
-
-				// x
-				fullVertexData.push_back(attributes.vertices[vertexIndex]);
-				// y
-				fullVertexData.push_back(attributes.vertices[vertexIndex + 1]);
-				// z
-				fullVertexData.push_back(attributes.vertices[vertexIndex + 2]);
-
-				fullVertexData.push_back(attributes.normals[normalIndex]);
-
-				fullVertexData.push_back(attributes.normals[normalIndex + 1]);
-
-				fullVertexData.push_back(attributes.normals[normalIndex + 2]);
-
-				// u
-				fullVertexData.push_back(attributes.texcoords[uvIndex]);
-				// v
-				fullVertexData.push_back(attributes.texcoords[uvIndex + 1]);
-			}
-
-			//Generate and Assign ID to VAO
-			glGenVertexArrays(1, &VAO);
-			//Generate and Assign ID to VBO
-			glGenBuffers(1, &VBO);
-
-			glBindVertexArray(VAO);
-			glBindBuffer(GL_ARRAY_BUFFER, VBO);
-			glBufferData(
-				GL_ARRAY_BUFFER,
-				sizeof(GL_FLOAT) * fullVertexData.size(),
-				fullVertexData.data(),
-				GL_STATIC_DRAW
-			);
-
-			glVertexAttribPointer(
-				0, //Pos
-				3, //xyz
-				GL_FLOAT,
-				GL_FALSE,
-				8 * sizeof(GL_FLOAT),
-				(void*)0
-			);
-
-			GLintptr normPtr = 3 * sizeof(float);
-			glVertexAttribPointer(
-				1,
-				3,
-				GL_FLOAT,
-				GL_FALSE,
-				8 * sizeof(GL_FLOAT),
-				(void*)normPtr
-			);
-
-			GLintptr uvPtr = 6 * sizeof(float);
-			glVertexAttribPointer(
-				2,
-				2,
-				GL_FLOAT,
-				GL_FALSE,
-				8 * sizeof(GL_FLOAT),
-				(void*)uvPtr
-			);
-
-			glEnableVertexAttribArray(0);
-			glEnableVertexAttribArray(1);
-			glEnableVertexAttribArray(2);
-
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-			glBindVertexArray(0);
-
-			glEnable(GL_DEPTH_TEST);
-		}
-
 		Model(std::string objName, int id) {
 			this->id = id;
-			pos_x = pos_y = pos_z = 10.f * id;
+			pos_x = 10.f * id;
+			pos_y = pos_z = 0;
 			rot_x = rot_z = 0.f;
 			theta = 90.f;
 			rot_y = 1.f;
-			scale_x = scale_y = scale_z = theta = 0.05f;
+			scale_x = scale_y = scale_z = theta = 0.001f;
 
 			std::string objPath = "3D/";
 			if (id == 0) { 
@@ -261,17 +167,14 @@ class Model {
 			// Initialize Texture Count
 			switch (id) {
 				case 0:	// Player Sub Texture Count
-				case 6:
+				case 6:	// 6th Enemy Sub Texture Count
 					txtCount = 5;
 					break;
-				case 1:	// Enemy Sub Texture Count
+				case 1:	// 2nd Enemy Sub Texture Count
 					txtCount = 2;
 					break;
-				case 2:
-				case 3:
-				case 4:
-				case 5:
-					txtCount = 0;
+				default:	// Other Enemy Sub Texture Count
+					txtCount = 1;
 			}
 
 			if (txtCount > 0) {
@@ -299,7 +202,11 @@ class Model {
 						tex_bytes.push_back(stbi_load("3D/Enemy/6/Hades_metallic.png", &img_w[2], &img_h[2], &color_channels[2], 4));
 						tex_bytes.push_back(stbi_load("3D/Enemy/6/Hades_roughness.png", &img_w[3], &img_h[3], &color_channels[3], 4));
 						tex_bytes.push_back(stbi_load("3D/Enemy/6/Hades_normal.png", &img_w[4], &img_h[4], &color_channels[4], 4));
-				}
+						break;
+					default:
+						std::string txtStr = "3D/Enemy/" + std::to_string(id) + "/tex.png";
+						tex_bytes.push_back(stbi_load(txtStr.c_str(), &img_w[0], &img_h[0], &color_channels[0], 4));
+					}
 
 				switch (id) {
 					case 0:
@@ -326,6 +233,16 @@ class Model {
 							stbi_image_free(tex_bytes[i]);
 							glEnable(GL_DEPTH_TEST);
 						}
+						break;
+					default:
+						glGenTextures(1, &txt[0]);
+						glActiveTexture(GL_TEXTURE0);
+						glBindTexture(GL_TEXTURE_2D, this->txt[0]);
+						glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this->img_w[0], this->img_h[0], 0, GL_RGBA, GL_UNSIGNED_BYTE, this->tex_bytes[0]);
+						glGenerateMipmap(GL_TEXTURE_2D);
+
+						stbi_image_free(tex_bytes[0]);
+						glEnable(GL_DEPTH_TEST);
 				}
 			}
 		}
@@ -334,29 +251,6 @@ class Model {
 			transformationMatrix = glm::translate(identityMatrix, glm::vec3(pos_x, pos_y, pos_z));
 			transformationMatrix = glm::scale(transformationMatrix, glm::vec3(scale_x, scale_y, scale_z));
 			transformationMatrix = glm::rotate(transformationMatrix, glm::radians(theta), glm::normalize(glm::vec3(rot_x, rot_y, rot_z)));
-		}
-
-		void draw(GLuint shaderProgram, Camera cam) {
-			glDepthMask(GL_TRUE);
-			glDepthFunc(GL_LESS);
-
-			glUseProgram(shaderProgram);
-
-			//set color
-			glm::vec3 colorMatrix3 = glm::vec3(0.f, 0.f, 1.f);
-			unsigned int colorLoc3 = glGetUniformLocation(shaderProgram, "aColor");
-			glUniform3fv(colorLoc3, 1, glm::value_ptr(colorMatrix3));
-
-			// Initialize projection, view, and transformation locations
-			unsigned int projectionLoc = glGetUniformLocation(shaderProgram, "projection");
-			glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(cam.getProjectionMatrix()));
-			unsigned int viewLoc = glGetUniformLocation(shaderProgram, "view");
-			glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(cam.getViewMatrix()));
-			unsigned int transformationLoc = glGetUniformLocation(shaderProgram, "transform");
-			glUniformMatrix4fv(transformationLoc, 1, GL_FALSE, glm::value_ptr(transformationMatrix));
-
-			glBindVertexArray(VAO);
-			glDrawArrays(GL_TRIANGLES, 0, fullVertexData.size() / 8);
 		}
 
 		void draw(GLuint shaderProgram, Light light, Camera cam) {
@@ -393,13 +287,14 @@ class Model {
 							glBindTexture(GL_TEXTURE_2D, txt[i]);
 							glUniform1i(texAddress, i);
 						}
+						break;
+					default:
+						texAddress = glGetUniformLocation(shaderProgram, "tex0");
+						glActiveTexture(GL_TEXTURE0);
+						glBindTexture(GL_TEXTURE_2D, txt[0]);
+						glUniform1i(texAddress, 0);
 				}
 			}
-
-			//set color
-			glm::vec3 colorMatrix3 = glm::vec3(0.f, 0.f, 0.5f);
-			unsigned int colorLoc3 = glGetUniformLocation(shaderProgram, "aColor");
-			glUniform3fv(colorLoc3, 1, glm::value_ptr(colorMatrix3));
 
 			// Initialize projection, view, and transformation locations
 			unsigned int projectionLoc = glGetUniformLocation(shaderProgram, "projection");
@@ -411,7 +306,6 @@ class Model {
 
 			glBindVertexArray(VAO);
 			glDrawArrays(GL_TRIANGLES, 0, fullVertexData.size() / 14);
-			
 			
 			// std::cout << pos_x << " " << pos_y << " " << pos_z << " | " << rot_x << " " << rot_y << " " << rot_z << " | " << scale_x << " " << scale_y << " " << scale_z << "\n";
 		}

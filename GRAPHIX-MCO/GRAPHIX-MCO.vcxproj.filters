@@ -55,7 +55,9 @@
     <CopyFileToFolders Include="Shader\2txtModel.vert" />
     <CopyFileToFolders Include="Shader\5txtModel.frag" />
     <CopyFileToFolders Include="Shader\5txtModel.vert" />
-    <CopyFileToFolders Include="Shader\notxtModel.frag" />
-    <CopyFileToFolders Include="Shader\notxtModel.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shader\1txtModel.frag" />
+    <None Include="Shader\1txtModel.vert" />
   </ItemGroup>
 </Project>

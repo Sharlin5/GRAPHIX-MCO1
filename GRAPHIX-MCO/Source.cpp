@@ -84,9 +84,9 @@ int main(void)
     glm::mat4 orthoMatrix = glm::ortho(screenWidth, screenHeight, -1.f, 1.f, -.75f, .75f);
 
     // Load Shaders
+    Shader obj1TxtShdr = Shader("1txtModel");
     Shader obj2TxtShdr = Shader("2txtModel");
     Shader obj5TxtShdr = Shader("5txtModel");
-    Shader noTxtShdr = Shader("notxtModel");
     Shader skyboxShdr = Shader("skybox");
 
     // Initialize Skybox
@@ -124,10 +124,21 @@ int main(void)
     // Load Enemy Models
     enemies.push_back(Model("Seaview_submarine", 1));
     enemies.push_back(Model("11098_submarine_v4", 2));
-    enemies.push_back(Model("submarine", 3));
+    enemies.push_back(Model("Cat_Low", 3));
     enemies.push_back(Model("Cyclops_Subnautica", 4));
     enemies.push_back(Model("Submarine", 5));
-    //enemies.push_back(Model("Hades_Carrier", 6));
+    enemies.push_back(Model("Hades_Carrier", 6));
+
+    // Manually set each model's rot and scale values
+    enemies[0].setScale(0.05f, 0.05f, 0.05f);       // Seaview_submaring
+    enemies[1].setRot(-90.f, 0.f, 0.f, 90.f);       // 11090_submarine_v4
+    enemies[1].setScale(0.003f, 0.003f, 0.003f);
+    enemies[2].setScale(0.3f, 0.3f, 0.3f);          // Cat_Low
+    enemies[3].setScale(1.f, 1.f, 1.f);             // Cyclops_Subnautica
+    enemies[3].setRot(0.f, 90.f, 0.f, 90.f);
+    enemies[4].setScale(0.01f, 0.01f, 0.01f);       // Submarine
+    enemies[4].setRot(0.f, 90.f, 0.f, 90.f);
+    enemies[5].setScale(0.001f, 0.001f, 0.001f);    // Hades_Carrier
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -179,8 +190,10 @@ int main(void)
                     break;
                 case 0:
                 case 6:
+                    enemies[i].draw(obj2TxtShdr.getShader(), dirLight, currCam);
+                    break;
                 default:
-                    enemies[i].draw(obj5TxtShdr.getShader(), dirLight, currCam);
+                    enemies[i].draw(obj2TxtShdr.getShader(), dirLight, currCam);
             }            
         }
 
@@ -212,8 +225,8 @@ int main(void)
     // Cleanup
     skybox.deleteData();
     player.getPlayer().deleteData();
-    //for (Model model : enemies)
-    //    model.deleteData();
+    for (Model model : enemies)
+        model.deleteData();
 
     glfwTerminate();
     return 0;
