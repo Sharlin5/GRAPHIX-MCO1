@@ -187,6 +187,19 @@ int main(void)
             currCam.setOrthoView();
         }
 
+        //update light intensity
+        if (currIntensity == 1) {
+            lightIntensity = 0.0;
+        }
+        else if (currIntensity == 2) {
+            lightIntensity = 1.0;
+        }
+        else if (currIntensity == 3) {
+            lightIntensity = 1.5;
+        }
+
+        pointLight.setIntensity(lightIntensity);
+
         //std::cout << "CameraPos: " << currCam.getCameraPos().x << " " << currCam.getCameraPos().y << " " << currCam.getCameraPos().z << "\n";
         //std::cout << "CameraPos: " << F.x << " "  << F.y << " " << F.z << " | " << R.x << " " << R.y << " " << R.z << " | " << U.x << " " << U.y << " " << U.z << "\n";
 
@@ -202,11 +215,11 @@ int main(void)
 
         // Render Player
         player.getPlayer().initTransformationMatrix(identityMatrix);
-        player.getPlayer().draw(obj2TxtShdr.getShader(), dirLight, currCam);
+        player.getPlayer().draw(obj2TxtShdr.getShader(), dirLight, pointLight, currCam);
         
         for (int i = 0; i < enemies.size(); i++) {
             enemies[i].initTransformationMatrix(identityMatrix);            
-            enemies[i].draw(obj2TxtShdr.getShader(), dirLight, currCam);
+            enemies[i].draw(obj2TxtShdr.getShader(), dirLight, pointLight, currCam);
         }
 
         //std::cout << "[Player " << player.getPlayer().getID() << " Location] " << player.getPlayer().getPosX() << ' ' << player.getPlayer().getPosY() << ' ' << player.getPlayer().getPosZ() << " | " << player.getPlayer().getRotX() << ' ' << player.getPlayer().getRotY() << ' ' << player.getPlayer().getRotZ() << " | " << player.getPlayer().getScaleX() << ' ' << player.getPlayer().getScaleY() << ' ' << player.getPlayer().getScaleZ() << '\n';
@@ -216,16 +229,7 @@ int main(void)
         // change to modPos_x, modPos_y, modPos_z 
         //player.movePlayer(0, 0, 0);
 
-        //update light intensity
-        if (currIntensity == 1) {
-            lightIntensity = 0.0;
-        } else if (currIntensity == 2) {
-            lightIntensity = 1.0;
-        } else if (currIntensity == 3) {
-            lightIntensity = 1.5;
-        }
-
-        pointLight.setIntensity(lightIntensity);
+        
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);

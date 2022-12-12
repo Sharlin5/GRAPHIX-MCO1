@@ -242,14 +242,26 @@ class Model {
 			transformationMatrix = glm::rotate(transformationMatrix, glm::radians(theta), glm::normalize(glm::vec3(rot_x, rot_y, rot_z)));
 		}
 
-		void draw(GLuint shaderProgram, Light light, Camera cam) {
+		void draw(GLuint shaderProgram, Light dirLight, Light pointLight, Camera cam) {
 			glDepthMask(GL_TRUE);
 			glDepthFunc(GL_LESS);
 
 			glUseProgram(shaderProgram);
 
 			// Link Light Variables to Shader
-			light.linkShader(shaderProgram, cam);
+			GLuint pointLightAddress = glGetUniformLocation(shaderProgram, "pointLightPos");
+			glUniform3fv(pointLightAddress, 1, glm::value_ptr(pointLight.getLightPos()));
+
+			GLuint dirLightAddress = glGetUniformLocation(shaderProgram, "dirLightPos");
+			glUniform3fv(dirLightAddress, 1, glm::value_ptr(dirLight.getLightPos()));
+
+			GLuint pointIntensityAddress = glGetUniformLocation(shaderProgram, "pointIntensity");
+			glUniform1f(pointIntensityAddress, pointLight.getIntensity());
+
+			GLuint dirIntensityAddress = glGetUniformLocation(shaderProgram, "dirIntensity");
+			glUniform1f(dirIntensityAddress, dirLight.getIntensity());
+
+			dirLight.linkShader(shaderProgram, cam);
 
 			GLuint texAddress;
 			
