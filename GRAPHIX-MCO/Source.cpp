@@ -94,7 +94,7 @@ int main(void)
 
     // Initialize Point Light and Directional Light
     DirLight dirLight = DirLight(glm::vec3(10.f, 10.f, 10.f), 1);
-    PointLight pointLight = PointLight(glm::vec3(-10.f, -10.f, -10.f), 2);
+    PointLight pointLight = PointLight(glm::vec3(0.f, 0.f, 0.f), 2);
 
     // Initialize Ortographic and Perspective Cameras// Initialize Camera
     glm::vec3 cameraPos = glm::vec3(0.f, 5.f, 10.0f);
@@ -209,6 +209,7 @@ int main(void)
             lightIntensity = 1.5;
         }
 
+        pointLight.setLightPos(perspectiveCam.getCameraPos());
         pointLight.setIntensity(lightIntensity);
 
         //std::cout << "CameraPos: " << currCam.getCameraPos().x << " " << currCam.getCameraPos().y << " " << currCam.getCameraPos().z << "\n";
@@ -226,6 +227,8 @@ int main(void)
 
         // Render Player
         player.getPlayer().initTransformationMatrix(identityMatrix);
+        player.movePlayer(perspectiveCam.getCameraPos().x, perspectiveCam.getCameraPos().y, perspectiveCam.getCameraPos().z);
+        std::cout << player.getPlayer().getPosX() << ' ' << player.getPlayer().getPosY() << ' ' << player.getPlayer().getPosZ() << "\n";
         player.getPlayer().draw(obj2TxtShdr.getShader(), dirLight, pointLight, currCam);
         
         for (int i = 0; i < enemies.size(); i++) {
@@ -318,19 +321,6 @@ void Key_Callback(GLFWwindow* window, int key, int scanCode, int action, int mod
             else
                 perspectiveCam.setCameraPos(glm::vec3(perspectiveCam.getCameraPos().x, 0.f, perspectiveCam.getCameraPos().z));
             player.movePlayer(perspectiveCam.getCameraPos().x, perspectiveCam.getCameraPos().y, perspectiveCam.getCameraPos().z);
-        }
-
-        // if pos += 0.5 > 0 do not register this.
-        if (pos_y += 0.5 < 0) {
-            if (key == GLFW_KEY_Q) {
-                // Ascend(Depth)
-                modPos_y += 0.5;
-            }
-        }
-
-        if (key == GLFW_KEY_E) {
-            // Descend(Depth)
-            modPos_y += 0.5;
         }
         
         std::cout << player.getPlayer().getPosY() << "\n";

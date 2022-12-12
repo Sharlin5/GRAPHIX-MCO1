@@ -1,7 +1,8 @@
 #version 330 core
 
 uniform sampler2D tex0, tex1, norm0;
-uniform vec3 dirLightPos, pointLightPos, dirIntensity, pointIntensity;
+uniform vec3 dirLightPos, pointLightPos;
+uniform float dirIntensity, pointIntensity;
 uniform vec3 lightPos, lightColor, ambientColor, cameraPos;
 uniform float ambientStr, specStr, specPhong, intensity;
 
@@ -30,7 +31,7 @@ void main(){
 	vec3 lightDir = normalize(lightPos - fragPos);
 	//vec3 lightDir = normalize(dirLightPos - fragPos);
 
-	float diff = max(dot(normal, lightDir), intensity);
+	float diff = max(dot(normal, lightDir), dirIntensity);
 	vec3 diffuse = diff * lightColor;
 
 	vec3 ambientCol = ambientColor * ambientStr;
@@ -39,14 +40,13 @@ void main(){
 	vec3 reflectDir = reflect(-lightDir, normal);
 
 	float spec = pow(max(dot(reflectDir, viewDir), 0.1), specPhong);
-	//vec3 specColor = specStr * lightColor;
 	vec3 specColor = spec * specStr * lightColor;
 
 	vec4 result = vec4(specColor + diffuse + ambientCol, 1.0);
 
 	// point light
 	lightDir = normalize(pointLightPos - fragPos);
-	diff = max(dot(normal, lightDir), intensity);
+	diff = max(dot(normal, lightDir), pointIntensity);
 	diffuse = diff * lightColor;
 	viewDir = normalize(cameraPos - fragPos);
 	reflectDir = reflect(-lightDir, normal);
