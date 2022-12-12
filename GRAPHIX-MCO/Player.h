@@ -9,11 +9,10 @@ class Player {
 		}
 
 		Player(glm::mat4 identityMatrix) {
-			player = Model("SubLow0Smooth", 0);
-			//player = Model("SubLow0Smooth");
-			player.setPos(0, 0, 2.f);
-			player.setRot(0, 0, 0, 90.f);
-			player.setScale(10.f, 10.f, 10.f);
+			player = Model("Odyssey_OBJ", 0);
+			player.setPos(-10.f, 0.f, 0.f);
+			player.setRot(0, 1.f, 0, 90.f);
+			player.setScale(0.05f, 0.05f, 0.05f);
 			player.initTransformationMatrix(identityMatrix);
 		}
 

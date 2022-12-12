@@ -167,8 +167,7 @@ class Model {
 			// Initialize Texture Count
 			switch (id) {
 				case 0:	// Player Sub Texture Count
-				case 6:	// 6th Enemy Sub Texture Count
-					txtCount = 5;
+					txtCount = 3;
 					break;
 				case 1:	// 2nd Enemy Sub Texture Count
 					txtCount = 2;
@@ -186,22 +185,13 @@ class Model {
 				// Initialize Textures
 				switch (id) {
 					case 0:
-						tex_bytes.push_back(stbi_load("3D/Player/SubLow0Smooth_DefaultMaterial_AO.png", &img_w[0], &img_h[0], &color_channels[0], 4));
-						tex_bytes.push_back(stbi_load("3D/Player/SubLow0Smooth_DefaultMaterial_BaseColor.png", &img_w[1], &img_h[1], &color_channels[1], 4));
-						tex_bytes.push_back(stbi_load("3D/Player/SubLow0Smooth_DefaultMaterial_Metallic.png", &img_w[2], &img_h[2], &color_channels[2], 4));
-						tex_bytes.push_back(stbi_load("3D/Player/SubLow0Smooth_DefaultMaterial_RoughnessAlt.png", &img_w[3], &img_h[3], &color_channels[3], 4));
-						tex_bytes.push_back(stbi_load("3D/Player/SubLow0Smooth_DefaultMaterial_Normal.png", &img_w[4], &img_h[4], &color_channels[4], 4));
+						tex_bytes.push_back(stbi_load("3D/Player/odyssey_01_FBX_odyssey_hull_BaseColor.png", &img_w[0], &img_h[0], &color_channels[0], 4));
+						tex_bytes.push_back(stbi_load("3D/Player/odyssey_01_FBX_odyssey_hull_Roughness.png", &img_w[1], &img_h[1], &color_channels[1], 4));
+						tex_bytes.push_back(stbi_load("3D/Player/odyssey_01_FBX_odyssey_hull_Normal.png", &img_w[2], &img_h[2], &color_channels[2], 4));
 						break;
 					case 1:
 						tex_bytes.push_back(stbi_load("3D/Enemy/1/fna1.jpg", &img_w[0], &img_h[0], &color_channels[0], 0));
 						tex_bytes.push_back(stbi_load("3D/Enemy/1/fna1b.jpg", &img_w[1], &img_h[1], &color_channels[1], 0));
-						break;
-					case 6:
-						tex_bytes.push_back(stbi_load("3D/Enemy/6/Hades_albedo.png", &img_w[0], &img_h[0], &color_channels[0], 4));
-						tex_bytes.push_back(stbi_load("3D/Enemy/6/Hades_ao.png", &img_w[1], &img_h[1], &color_channels[1], 4));
-						tex_bytes.push_back(stbi_load("3D/Enemy/6/Hades_metallic.png", &img_w[2], &img_h[2], &color_channels[2], 4));
-						tex_bytes.push_back(stbi_load("3D/Enemy/6/Hades_roughness.png", &img_w[3], &img_h[3], &color_channels[3], 4));
-						tex_bytes.push_back(stbi_load("3D/Enemy/6/Hades_normal.png", &img_w[4], &img_h[4], &color_channels[4], 4));
 						break;
 					default:
 						std::string txtStr = "3D/Enemy/" + std::to_string(id) + "/tex.png";
@@ -210,10 +200,9 @@ class Model {
 
 				switch (id) {
 					case 0:
-					case 6:
 						for (int i = 0; i < txtCount; i++) {
 							glGenTextures(1, &txt[i]);
-							glActiveTexture(GL_TEXTURE0);
+							glActiveTexture(GL_TEXTURE0 + i);
 							glBindTexture(GL_TEXTURE_2D, this->txt[i]);
 							glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this->img_w[i], this->img_h[i], 0, GL_RGBA, GL_UNSIGNED_BYTE, this->tex_bytes[i]);
 							glGenerateMipmap(GL_TEXTURE_2D);
@@ -225,7 +214,7 @@ class Model {
 					case 1:
 						for (int i = 0; i < txtCount; i++) {
 							glGenTextures(1, &txt[i]);
-							glActiveTexture(GL_TEXTURE0);
+							glActiveTexture(GL_TEXTURE0 + i);
 							glBindTexture(GL_TEXTURE_2D, this->txt[i]);
 							glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this->img_w[i], this->img_h[i], 0, GL_RGB, GL_UNSIGNED_BYTE, this->tex_bytes[i]);
 							glGenerateMipmap(GL_TEXTURE_2D);
@@ -264,21 +253,21 @@ class Model {
 
 			GLuint texAddress;
 			
+			int i;
 			if (txtCount > 0) {
 				switch (id) {
 					case 0:
-					case 6:
-						for (int i = 0; i < txtCount - 1; i++) {
+						for (i = 0; i < txtCount - 1; i++) {
 							texAddress = glGetUniformLocation(shaderProgram, "tex" + i);
-							glActiveTexture(GL_TEXTURE0);
+							glActiveTexture(GL_TEXTURE0 + i);
 							glBindTexture(GL_TEXTURE_2D, txt[i]);
 							glUniform1i(texAddress, i);
 						}
 
 						texAddress = glGetUniformLocation(shaderProgram, "norm0");
-						glActiveTexture(GL_TEXTURE4);
-						glBindTexture(GL_TEXTURE_2D, txt[4]);
-						glUniform1i(texAddress, 4);
+						glActiveTexture(GL_TEXTURE0 + i);
+						glBindTexture(GL_TEXTURE_2D, txt[i]);
+						glUniform1i(texAddress, i);
 						break;
 					case 1:
 						for (int i = 0; i < txtCount; i++) {

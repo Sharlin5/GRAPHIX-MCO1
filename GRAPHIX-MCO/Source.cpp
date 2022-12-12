@@ -118,7 +118,9 @@ int main(void)
     orthoCam.setCameraFRU(F, R, U);
     
     // TODO: Add Source Links
-    // Load Player Model
+    /* Load Player Model
+    *  Odyssey Submarine by keptin (TurboSquid)
+    *  Link: https://www.turbosquid.com/3d-models/odyssey-submarine-3d-model-1799692 */
     player = Player(identityMatrix);
 
     // Load Enemy Models
@@ -127,8 +129,8 @@ int main(void)
        Link: https://free3d.com/3d-model/seaview-submarine-78646.html */
     enemies.push_back(Model("Seaview_submarine", 1));
 
-    /* 
-    */
+    /* Submarine v4 by printable_models (Free3D)
+       Link: https://free3d.com/3d-model/submarine-v4--863722.html */
     enemies.push_back(Model("11098_submarine_v4", 2));
 
     /*
@@ -143,20 +145,21 @@ int main(void)
        Link: https://www.turbosquid.com/3d-models/free-submarine-3d-model/708103 */
     enemies.push_back(Model("Submarine", 5));
 
-    /* Hades Carrier by Crazycatdev (TurboSquid)
-       Link: https://www.turbosquid.com/3d-models/hades-cruiser-obj-free/1133051 */
-    enemies.push_back(Model("Hades_Carrier", 6));
+    /* Dark Submarineby by julien-4 (CGTrader)
+       Link: https://www.cgtrader.com/free-3d-models/vehicle/other/submarine-6783f21e-dd4c-4ded-ae8a-0be8ec46767d */
+    enemies.push_back(Model("Dark_Submarine", 6));
 
     // Manually set each model's rot and scale values
-    enemies[0].setScale(0.05f, 0.05f, 0.05f);       // Seaview_submarine
-    enemies[1].setRot(-90.f, 0.f, 0.f, 90.f);       // 11090_submarine_v4
+    enemies[0].setScale(0.05f, 0.05f, 0.05f);       // Seaview Submarine
+    enemies[1].setRot(-90.f, 0.f, 0.f, 90.f);       // Submarine v4
     enemies[1].setScale(0.003f, 0.003f, 0.003f);
     enemies[2].setScale(0.3f, 0.3f, 0.3f);          // Cat_Low
     enemies[3].setScale(1.f, 1.f, 1.f);             // Cyclops_Subnautica
     enemies[3].setRot(0.f, 90.f, 0.f, 90.f);
     enemies[4].setScale(0.01f, 0.01f, 0.01f);       // Submarine
     enemies[4].setRot(0.f, 90.f, 0.f, 90.f);
-    enemies[5].setScale(0.001f, 0.001f, 0.001f);    // Hades_Carrier
+    enemies[5].setScale(0.1f, 0.1f, 0.1f);          // Dark Submarine
+    enemies[5].setPos(enemies[5].getPosX(), enemies[5].getPosY() - 25.f, -85.f);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -196,23 +199,11 @@ int main(void)
 
         // Render Player
         player.getPlayer().initTransformationMatrix(identityMatrix);
-        //player.getPlayer().draw(obj5TxtShdr.getShader(), dirLight, currCam);
+        player.getPlayer().draw(obj2TxtShdr.getShader(), dirLight, currCam);
         
         for (int i = 0; i < enemies.size(); i++) {
-            enemies[i].initTransformationMatrix(identityMatrix);
-            
-
-            switch (enemies[i].getID()) {
-                case 1:
-                    enemies[i].draw(obj2TxtShdr.getShader(), dirLight, currCam);
-                    break;
-                case 0:
-                case 6:
-                    enemies[i].draw(obj2TxtShdr.getShader(), dirLight, currCam);
-                    break;
-                default:
-                    enemies[i].draw(obj2TxtShdr.getShader(), dirLight, currCam);
-            }            
+            enemies[i].initTransformationMatrix(identityMatrix);            
+            enemies[i].draw(obj2TxtShdr.getShader(), dirLight, currCam);
         }
 
         //std::cout << "[Player " << player.getPlayer().getID() << " Location] " << player.getPlayer().getPosX() << ' ' << player.getPlayer().getPosY() << ' ' << player.getPlayer().getPosZ() << " | " << player.getPlayer().getRotX() << ' ' << player.getPlayer().getRotY() << ' ' << player.getPlayer().getRotZ() << " | " << player.getPlayer().getScaleX() << ' ' << player.getPlayer().getScaleY() << ' ' << player.getPlayer().getScaleZ() << '\n';
