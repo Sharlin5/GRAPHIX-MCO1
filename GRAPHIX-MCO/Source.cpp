@@ -240,8 +240,6 @@ int main(void)
         // change to modPos_x, modPos_y, modPos_z 
         //player.movePlayer(0, 0, 0);
 
-        
-
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
 
@@ -282,37 +280,44 @@ void Key_Callback(GLFWwindow* window, int key, int scanCode, int action, int mod
     }
 
     // Perspective (Player) Movement
-    if (isPerspective) {
+    if (isPerspective && !isFirst) {
         if (key == GLFW_KEY_W) {
             // Forward
             perspectiveCam.setCameraPos(perspectiveCam.getCameraPos() + cameraSpeed * perspectiveCam.getCameraF());
-            player.getPlayer().setPos(perspectiveCam.getCameraPos().x, perspectiveCam.getCameraPos().y, perspectiveCam.getCameraPos().z);
-            //perspectiveCam.setViewMatrix();
-            std::cout << perspectiveCam.getCameraPos().x << ' ' << perspectiveCam.getCameraPos().y << ' ' << perspectiveCam.getCameraPos().z << "\n";
+            player.movePlayer(perspectiveCam.getCameraPos().x, perspectiveCam.getCameraPos().y, perspectiveCam.getCameraPos().z);
         }
 
         if (key == GLFW_KEY_S) {
             // Backward
             perspectiveCam.setCameraPos(perspectiveCam.getCameraPos() - cameraSpeed * perspectiveCam.getCameraF());
-            player.getPlayer().setPos(perspectiveCam.getCameraPos().x, perspectiveCam.getCameraPos().y, perspectiveCam.getCameraPos().z);
-            //perspectiveCam.setViewMatrix();
-            std::cout << perspectiveCam.getCameraPos().x << ' ' << perspectiveCam.getCameraPos().y << ' ' << perspectiveCam.getCameraPos().z << "\n";
+            player.movePlayer(perspectiveCam.getCameraPos().x, perspectiveCam.getCameraPos().y, perspectiveCam.getCameraPos().z);
         }
 
         if (key == GLFW_KEY_A) {
             // turn left
             perspectiveCam.setCameraPos(perspectiveCam.getCameraPos() - cameraSpeed * glm::normalize(glm::cross(perspectiveCam.getCameraF(), perspectiveCam.getCameraU())));
-            player.getPlayer().setPos(perspectiveCam.getCameraPos().x, perspectiveCam.getCameraPos().y, perspectiveCam.getCameraPos().z);
-            //perspectiveCam.setViewMatrix();
-            std::cout << perspectiveCam.getCameraPos().x << ' ' << perspectiveCam.getCameraPos().y << ' ' << perspectiveCam.getCameraPos().z << "\n";
+            player.movePlayer(perspectiveCam.getCameraPos().x, perspectiveCam.getCameraPos().y, perspectiveCam.getCameraPos().z);
         }
 
         if (key == GLFW_KEY_D) {
             // turn right
             perspectiveCam.setCameraPos(perspectiveCam.getCameraPos() + cameraSpeed * glm::normalize(glm::cross(perspectiveCam.getCameraF(), perspectiveCam.getCameraU())));
-            player.getPlayer().setPos(perspectiveCam.getCameraPos().x, perspectiveCam.getCameraPos().y, perspectiveCam.getCameraPos().z);
-            //perspectiveCam.setViewMatrix();
-            std::cout << perspectiveCam.getCameraPos().x << ' ' << perspectiveCam.getCameraPos().y << ' ' << perspectiveCam.getCameraPos().z << "\n";
+            player.movePlayer(perspectiveCam.getCameraPos().x, perspectiveCam.getCameraPos().y, perspectiveCam.getCameraPos().z);
+        }
+
+        if (key == GLFW_KEY_Q) {
+            // move up
+            perspectiveCam.setCameraPos(glm::vec3(perspectiveCam.getCameraPos().x, perspectiveCam.getCameraPos().y + cameraSpeed, perspectiveCam.getCameraPos().z));
+            player.movePlayer(perspectiveCam.getCameraPos().x, perspectiveCam.getCameraPos().y, perspectiveCam.getCameraPos().z);
+        }
+
+        if (key == GLFW_KEY_E) {
+            // move down
+            if(perspectiveCam.getCameraPos().y > 0)
+                perspectiveCam.setCameraPos(glm::vec3(perspectiveCam.getCameraPos().x, perspectiveCam.getCameraPos().y - cameraSpeed, perspectiveCam.getCameraPos().z));
+            else
+                perspectiveCam.setCameraPos(glm::vec3(perspectiveCam.getCameraPos().x, 0.f, perspectiveCam.getCameraPos().z));
+            player.movePlayer(perspectiveCam.getCameraPos().x, perspectiveCam.getCameraPos().y, perspectiveCam.getCameraPos().z);
         }
 
         // if pos += 0.5 > 0 do not register this.
@@ -327,13 +332,15 @@ void Key_Callback(GLFWwindow* window, int key, int scanCode, int action, int mod
             // Descend(Depth)
             modPos_y += 0.5;
         }
+        
+        std::cout << player.getPlayer().getPosY() << "\n";
     }
     else {
         //pan camera in top view
         if (key == GLFW_KEY_W) {
             // Forward
-            //pan_y += 0.5;
-            orthoCam.setCameraFRU(glm::vec3(F.x + 0.5f, F.y, F.z), R, U);
+            pan_y += 0.5;
+            orthoCam.setCameraFRU(glm::vec3(F.x, F.y, F.z), R, U);
             orthoCam.setOrthoView();
         }
 
