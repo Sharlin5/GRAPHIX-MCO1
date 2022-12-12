@@ -106,6 +106,11 @@ class DirLight : public Light {
 			lightColor = ambientColor = glm::vec3(1.f, 1.f, 1.f);
 			this->lightPos = lightPos;
 		}
+
+		void linkDir(GLuint shaderProgram) {
+			GLuint lightAddress = glGetUniformLocation(shaderProgram, "dirLightPos");
+			glUniform3fv(lightAddress, 1, glm::value_ptr(lightPos));
+		}
 };
 
 class PointLight : public Light {
@@ -119,5 +124,10 @@ class PointLight : public Light {
 
 			lightColor = ambientColor = glm::vec3(1.f, 1.f, 1.f);
 			this->lightPos = lightPos;
+		}
+
+		void linkPoint(GLuint shaderProgram) {
+			GLuint lightAddress = glGetUniformLocation(shaderProgram, "pointLightPos");
+			glUniform3fv(lightAddress, 1, glm::value_ptr(lightPos));
 		}
 };
