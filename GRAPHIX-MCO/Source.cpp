@@ -94,7 +94,7 @@ int main(void)
 
     // Initialize Point Light and Directional Light
     DirLight dirLight = DirLight(glm::vec3(10.f, 10.f, 10.f), 1);
-    PointLight pointLight = PointLight(glm::vec3(-10.f, -10.f, -10.f), 2);
+    PointLight pointLight = PointLight(glm::vec3(0.f, 0.f, 0.f), 2);
 
     // Initialize Ortographic and Perspective Cameras// Initialize Camera
     glm::vec3 cameraPos = glm::vec3(0.f, 5.f, 10.0f);
@@ -209,6 +209,7 @@ int main(void)
             lightIntensity = 1.5;
         }
 
+        pointLight.setLightPos(perspectiveCam.getCameraPos());
         pointLight.setIntensity(lightIntensity);
 
         //std::cout << "CameraPos: " << currCam.getCameraPos().x << " " << currCam.getCameraPos().y << " " << currCam.getCameraPos().z << "\n";
@@ -226,6 +227,8 @@ int main(void)
 
         // Render Player
         player.getPlayer().initTransformationMatrix(identityMatrix);
+        player.movePlayer(perspectiveCam.getCameraPos().x, perspectiveCam.getCameraPos().y, perspectiveCam.getCameraPos().z);
+        std::cout << player.getPlayer().getPosX() << ' ' << player.getPlayer().getPosY() << ' ' << player.getPlayer().getPosZ() << "\n";
         player.getPlayer().draw(obj2TxtShdr.getShader(), dirLight, pointLight, currCam);
         
         for (int i = 0; i < enemies.size(); i++) {
@@ -297,18 +300,20 @@ void Key_Callback(GLFWwindow* window, int key, int scanCode, int action, int mod
             player.getPlayer().setPos(perspectiveCam.getCameraPos().x, perspectiveCam.getCameraPos().y, perspectiveCam.getCameraPos().z);
             //perspectiveCam.setViewMatrix();
             std::cout << perspectiveCam.getCameraPos().x << ' ' << perspectiveCam.getCameraPos().y << ' ' << perspectiveCam.getCameraPos().z << "\n";
+            std::cout << player.getPlayer().getPosX() << ' ' << player.getPlayer().getPosY() << ' ' << player.getPlayer().getPosZ() << "\n";
         }
 
         if (key == GLFW_KEY_A) {
             // turn left
+            modRot_y -= 0.5;
             perspectiveCam.setCameraPos(perspectiveCam.getCameraPos() - cameraSpeed * glm::normalize(glm::cross(perspectiveCam.getCameraF(), perspectiveCam.getCameraU())));
             player.getPlayer().setPos(perspectiveCam.getCameraPos().x, perspectiveCam.getCameraPos().y, perspectiveCam.getCameraPos().z);
-            //perspectiveCam.setViewMatrix();
             std::cout << perspectiveCam.getCameraPos().x << ' ' << perspectiveCam.getCameraPos().y << ' ' << perspectiveCam.getCameraPos().z << "\n";
         }
 
         if (key == GLFW_KEY_D) {
             // turn right
+            modRot_y += 0.5;
             perspectiveCam.setCameraPos(perspectiveCam.getCameraPos() + cameraSpeed * glm::normalize(glm::cross(perspectiveCam.getCameraF(), perspectiveCam.getCameraU())));
             player.getPlayer().setPos(perspectiveCam.getCameraPos().x, perspectiveCam.getCameraPos().y, perspectiveCam.getCameraPos().z);
             //perspectiveCam.setViewMatrix();
